@@ -1,0 +1,94 @@
+.global-css {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+.component-sizes {
+  --slide-toggle-width: 4rem;
+}
+
+.colors-light {
+  --color-primary: oklch(66.18% .117 32.82);
+  --color-primary-icon: oklch(59.7% .12 32.82);
+  --color-surface: oklch(100% 0 0);
+  --color-navbar-bg: oklch(100% 0 0 / .65);
+  --color-navbar-inset: oklch(80% 0 0 / .6);
+  --color-topnav-bg: oklch(100% 0 0 / .6);
+  --color-topnav-inset: oklch(100% 0 0 / .9);
+  --color-box-shadow: oklch(75% 0 0 / .2);
+  --color-gap: oklch(90% 0 0);
+  --color-border: oklch(88% 0 0);
+  --color-text: oklch(0% 0 0);
+  --color-input-background: oklch(87% 0 0);
+  --color-input-icon: oklch(60% 0 0);
+  --color-input-focused: oklch(92% 0 0);
+  --color-scrollbar-thumb: oklch(45% 0 0 / .6);
+  --color-chatbot-bg: oklch(96% 0 0);
+  --color-logo-icon: oklch(64.7% .12 32.82);
+  --color-logo-icon-alt: oklch(57.9% .15 32.82);
+}
+
+.colors-dark {
+  --color-primary: oklch(66.18% .117 32.82);
+  --color-primary-icon: oklch(68.6% .144 55.06);
+  --color-surface: oklch(0% 0 0);
+  --color-navbar-bg: oklch(0% 0 0 / .5);
+  --color-navbar-inset: oklch(40% 0 0 / .9);
+  --color-topnav-bg: oklch(0% 0 0 / .4);
+  --color-topnav-inset: oklch(0% 0 0 / .6);
+  --color-box-shadow: oklch(40% 0 0 / .4);
+  --color-gap: oklch(25% 0 0);
+  --color-border: oklch(40% 0 0);
+  --color-text: oklch(100% 0 0);
+  --color-input-background: oklch(40% 0 0);
+  --color-input-icon: oklch(70% 0 0);
+  --color-input-focused: oklch(35% 0 0);
+  --color-scrollbar-thumb: oklch(85% 0 0 / .6);
+  --color-chatbot-bg: oklch(20% 0 0);
+  --color-logo-icon: oklch(61.9% .12 32.82);
+  --color-logo-icon-alt: oklch(57.65% .14 32.82);
+}
+
+:root {
+  composes: colors-light component-sizes global-css;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    composes: colors-dark component-sizes global-css;
+  }
+}
+
+:root.dark {
+  composes: colors-dark component-sizes global-css;
+}
+
+*, :before, :after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+}
+
+.bottom-nav {
+  background-color: var(--color-navbar-bg);
+  box-shadow: 0 0 1rem var(--color-box-shadow), inset 0 0 300rem var(--color-navbar-inset);
+  backdrop-filter: blur(.5rem);
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+.bottom-nav a {
+  color: var(--color-text);
+  width: 5rem;
+  height: 4rem;
+  padding: 1rem 1.5rem;
+}
