@@ -52,17 +52,17 @@
 }
 
 :root {
-    composes: colors-light component-sizes global-css;
+    @apply colors-light component-sizes global-css;
 }
 
 @media (prefers-color-scheme: dark) {
    :root:not(.light) {
-    composes: colors-dark component-sizes global-css;
+    @apply colors-dark component-sizes global-css;
    }
 }
 
 :root.dark {
-    composes: colors-dark component-sizes global-css;
+    @apply colors-dark component-sizes global-css;
 }
 
 *, *:before, *:after {

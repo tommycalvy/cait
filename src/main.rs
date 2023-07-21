@@ -6,11 +6,6 @@ use axum::{
 };
 use sailfish::TemplateOnce;
 use tower_http::services::ServeDir;
-use std::fs;
-use walkdir::WalkDir;
-use lightningcss::stylesheet::{
-    StyleSheet, ParserOptions, MinifyOptions, PrinterOptions
-};
 
 #[derive(TemplateOnce)]  // automatically implement `TemplateOnce` trait
 #[template(path = "hello.stpl")]  // specify the path to template
@@ -22,23 +17,7 @@ struct NavbarTemplate {
 
 #[tokio::main]
 async fn main() {
-    let mut css_string_combo = String::new();
-    for entry in WalkDir::new("./templates").into_iter()
-            .filter_map(|e| e.ok()) {
-        let f_name = entry.file_name().to_string_lossy();
-        if f_name.ends_with(".css") {
-            let css_string = fs::read_to_string(entry.path())
-                .expect("Should have been able to read string from css file");
-            css_string_combo.insert_str(0, &css_string);
-        }
-    }
-    let mut stylesheet = StyleSheet::parse(&css_string_combo, ParserOptions::default()).unwrap();
-    stylesheet.minify(MinifyOptions::default()).unwrap();
-
-    // Serialize it to a string.
-    let res = stylesheet.to_css(PrinterOptions::default()).unwrap();
-    fs::write("./assets/styles.css", res.code).expect("Should be able to write minified css string to file");
-
+    
     let app = Router::new()
         .route("/", get(home))
         .route("/:pathname", get(navbar))
