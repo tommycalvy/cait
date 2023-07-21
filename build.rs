@@ -1,5 +1,5 @@
 use std::{
-    fs, convert::Infallible, collections::HashMap
+    fs, convert::Infallible, collections::HashMap, path::Path
 };
 use cssparser::*;
 use walkdir::WalkDir;
@@ -18,6 +18,12 @@ use lightningcss::{
 };
 
 fn main() {
+    let assets_path = "./assets";
+    let styles_file_name = "styles.css";
+    let styles_file_path = format!("{assets_path}/{styles_file_name}");
+    if !Path::new(assets_path).is_dir() {
+        fs::create_dir_all(assets_path).expect("Should be able to create assets directory if not there");
+    }
     let mut css_minified = String::new();
     let targets: Targets = Targets::from(Browsers {
         safari: Some((9 << 16) | (3 << 8)),
@@ -48,17 +54,7 @@ fn main() {
                 }, 
                 &mut ApplyAtRuleParser
             ).unwrap();
-            
-            /*
-            let mut stylesheet = StyleSheet::parse(&css_string, ParserOptions {
-                filename: f_name.to_string(),
-                flags: ParserFlags::NESTING,
-                //css_modules: Some(css_modules::Config::default()),
-                ..ParserOptions::default()
-            }).unwrap();
-            */
 
-            
             let mut style_rules: HashMap<String, DeclarationBlock<'_>> = HashMap::new();
             stylesheet.visit(&mut ApplyVisitor {
                 rules: &mut style_rules,
@@ -78,8 +74,8 @@ fn main() {
             css_minified.insert_str(0, &res.code);
         }
     }
+    fs::write(styles_file_path, css_minified).expect("Should be able to write minified css string to file");
     
-    fs::write("./assets/styles.css", css_minified).expect("Should be able to write minified css string to file");
 }
 
 /// An @apply rule.
