@@ -14,11 +14,22 @@ use lightningcss::{
     stylesheet::{ParserOptions, MinifyOptions, PrinterOptions, StyleSheet, ParserFlags},
     visitor::{Visitor, Visit, VisitTypes},
     vendor_prefix::VendorPrefix,
-    targets::{Browsers, Targets, Features},
+    targets::{Browsers, Targets},
 };
 
 fn main() {
     let mut css_minified = String::new();
+    let targets: Targets = Targets::from(Browsers {
+        safari: Some((9 << 16) | (3 << 8)),
+        chrome: Some(69 << 16),
+        edge: Some(107 << 16),
+        android: Some(50 << 16),
+        firefox: Some(102 << 16),
+        ie: Some(8 << 16),
+        ios_saf: Some((11 << 16) | (3 << 8)),
+        opera: Some(94 << 16),
+        samsung: Some(4 << 16),
+    });
 
     for entry in WalkDir::new("./templates").into_iter()
             .filter_map(|e| e.ok()) {
@@ -37,24 +48,31 @@ fn main() {
                 }, 
                 &mut ApplyAtRuleParser
             ).unwrap();
+            
+            /*
+            let mut stylesheet = StyleSheet::parse(&css_string, ParserOptions {
+                filename: f_name.to_string(),
+                flags: ParserFlags::NESTING,
+                //css_modules: Some(css_modules::Config::default()),
+                ..ParserOptions::default()
+            }).unwrap();
+            */
 
+            
             let mut style_rules: HashMap<String, DeclarationBlock<'_>> = HashMap::new();
-
             stylesheet.visit(&mut ApplyVisitor {
                 rules: &mut style_rules,
             }).unwrap();
-            stylesheet.minify(MinifyOptions::default()).unwrap();
+            
+
+            stylesheet.minify(MinifyOptions { 
+                targets, 
+                ..MinifyOptions::default()
+            }).unwrap();
             
             let res = stylesheet.to_css(PrinterOptions {
                 //minify: true,
-                targets: Targets {
-                    browsers: Browsers {
-                        chrome: Some(100 << 16),
-                        ..Browsers::default()
-                    }.into(),
-                    include: Features::Colors,
-                    ..Targets::default()
-                },
+                targets,
                 ..PrinterOptions::default()
             }).unwrap();
             css_minified.insert_str(0, &res.code);
@@ -172,11 +190,8 @@ impl<'i, V: Visitor<'i, ApplyRule>> Visit<'i, ApplyRule, V> for ApplyRule {
     fn visit_children(&mut self, _: &mut V) -> Result<(), V::Error> {
       Ok(())
     }
-  }
-  
+}
 
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "jsonschema", derive(schemars::JsonSchema))]
 impl ToCss for ApplyRule {
     fn to_css<W: std::fmt::Write>(&self, _dest: &mut Printer<W>) -> Result<(), PrinterError> {
         Ok(())
