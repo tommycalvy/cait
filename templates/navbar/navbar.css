@@ -15,3 +15,10 @@
     width: 5rem;
     padding: 1rem 1rem;
 }
+
+.unused-class {
+    display: flex;
+    width: 100%;
+    color: black;
+    align-items: center;
+}

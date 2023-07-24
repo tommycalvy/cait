@@ -192,6 +192,7 @@ dependencies = [
  "axum",
  "cssparser",
  "lightningcss",
+ "regex",
  "sailfish",
  "tokio",
  "tower",

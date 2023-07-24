@@ -14,7 +14,9 @@ tower-http = { version = "0.4.0", features = ["fs", "trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
+
 [build-dependencies]
 walkdir = "2"
 lightningcss = { version = "1.0.0-alpha.44", features = ["bundler", "visitor"]}
 cssparser = "0.29.1"
+regex = "1.9.1"
