@@ -56,12 +56,12 @@
 }
 
 @media (prefers-color-scheme: dark) {
-   :root:not(.light) {
+   :root:not(:global(.light)) {
     @apply colors-dark component-sizes global-css;
    }
 }
 
-:root.dark {
+:root:global(.dark) {
     @apply colors-dark component-sizes global-css;
 }
 
