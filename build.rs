@@ -6,7 +6,7 @@ use std::{
 };
 use regex::Regex;
 use cssparser::*;
-use walkdir::WalkDir;
+use walkdir::{WalkDir, DirEntry};
 use lightningcss::{
     error::PrinterError,
     printer::Printer,
@@ -43,9 +43,13 @@ fn main() {
         samsung: Some(4 << 16),
     });
 
-    for entry in WalkDir::new(stpl_templates_dir).into_iter()
-            .filter_map(|e| e.ok()) {
+    let walker = WalkDir::new(stpl_templates_dir).into_iter();
+    for entry in walker.filter_entry(|e| !is_dir(e, stpl_output_dir))
+        .filter_map(|e| e.ok()) {
         let f_name = entry.file_name().to_string_lossy();
+        let entry_path = entry.path();
+        let file_path = entry_path.to_string_lossy();
+        dbg!(&file_path);
         if f_name.ends_with(".css") {
             let css_string = fs::read_to_string(entry.path())
                 .expect("Should have been able to read string from css file");
@@ -69,24 +73,13 @@ fn main() {
             let mut matched_classes: Vec<MatchedClassString> = Vec::new();
             
             // Removes classes from style_rules hashmap that aren't in the stpl files
-            let stpl_file_name_stripped = entry.path().file_stem().unwrap().to_string_lossy();
-            let stpl_file_path = format!(
-                "{}/{}.stpl", 
-                entry.path().parent().unwrap().to_string_lossy(),
-                stpl_file_name_stripped
-            );
-            //dbg!(&stpl_file_path);
-            if let Ok(stpl_string) = fs::read_to_string(&stpl_file_path) {
+            let stpl_file = file_path.replace(".css", ".stpl");
+            if let Ok(stpl_string) = fs::read_to_string(&stpl_file) {
                 let re = Regex::new("class\\s{0,1}=\\s{0,1}[\"\']([^\"\']*)[\"\']").unwrap();
-                //let re = Regex::new("class\\s{0,1}=\\s{0,1}[\"\']([^\"\']*)[\"\']/gm").unwrap();
                 for cap in re.captures_iter(&stpl_string) {
-                    //dbg!(&cap.get(0));
-                    //dbg!(&cap.get(1));
                     if let Some(whole_class_string) = cap.get(0) {
                         let whole_class_string = whole_class_string.as_str();
-                        // Save class_list for later for the replacing stage
-                        //classes_non_hashed.push(class_list.to_string());
-
+                        
                         // Get the capture group of the regex which removes the class=""
                         let separated_classes = cap.get(1).expect("Should have capture group of classes");
                         let mut class_list: Vec<String> = Vec::new();
@@ -95,6 +88,7 @@ fn main() {
                             style_rules.remove(class);
                             class_list.push(class.to_string());
                         }
+                        // Save class_list for later for the replacing stage
                         matched_classes.push(
                             MatchedClassString { 
                                 whole: String::from(whole_class_string), 
@@ -125,7 +119,7 @@ fn main() {
             css_minified.insert_str(0, &res.code);
 
             // Break down saved classes from stpl file, find their replacements, generate new class strings, and replace 
-            if let Ok(mut stpl_string) = fs::read_to_string(&stpl_file_path) {
+            if let Ok(mut content) = fs::read_to_string(&stpl_file) {
                 let exported_css_classes = res.exports.unwrap();
                 for matched_class in matched_classes {
                     let mut hashed_class_list = String::from("class=\"");
@@ -136,27 +130,49 @@ fn main() {
                         }
                     }
                     hashed_class_list.push('"');
-                    stpl_string = stpl_string.replace(&matched_class.whole, &hashed_class_list);
+                    content = content.replace(&matched_class.whole, &hashed_class_list);
                 }
-                // Then write stpl_string to new file in the ./template/output dir
-                let stpl_file_stem = stpl_file_path.strip_prefix(&stpl_templates_dir).unwrap();
-                let stpl_output_path = format!("{stpl_output_dir}{stpl_file_stem}");
-                let mut stpl_file_name = String::from(stpl_file_name_stripped);
-                stpl_file_name.push_str(".stpl");
-                let stpl_parent_dir = stpl_output_path.strip_suffix(&stpl_file_name).unwrap();
-                
-                if !Path::new(stpl_parent_dir).is_dir() {
-                    fs::create_dir_all(stpl_parent_dir).expect("Should be able to create assets directory if not there");
-                }
-                fs::write(stpl_output_path, stpl_string)
-                    .expect("Should be able to write new stpl string to file in output dir");
+                write_file_to_new_dir(content, entry_path, stpl_file, &stpl_templates_dir, &stpl_output_dir);
             }
+        }
+        if f_name.ends_with(".stpl") {
+            let css_file = file_path.replace(".stpl", ".css");
+            let css_path = Path::new(&css_file);
+            if !css_path.exists() {
+                let content = fs::read_to_string(entry_path)
+                    .expect("Should be able to read stpl file to string");
+                write_file_to_new_dir(content, entry_path, file_path.to_string(), &stpl_templates_dir, &stpl_output_dir);
+            } 
+
         }
     }
     fs::write(styles_file_path, css_minified).expect("Should be able to write minified css string to file");
-
     //panic!()
     
+}
+
+fn is_dir(entry: &DirEntry, dir: &str) -> bool {
+    entry.file_name()
+         .to_str()
+         .map(|s| s.starts_with(dir))
+         .unwrap_or(false)
+}
+
+fn write_file_to_new_dir(content: String, entry_path: &Path, file_path: String, old_dir: &str, new_dir: &str) {
+    
+    let stem = file_path.strip_prefix(&old_dir).unwrap();
+    let new_path = format!("{new_dir}/{stem}");
+
+    let parent_stem = entry_path.parent().unwrap()
+        .strip_prefix(&old_dir).unwrap().to_string_lossy();
+
+
+    let new_parent = format!("{new_dir}/{parent_stem}");
+    
+    if !Path::new(&new_parent).is_dir() {
+        fs::create_dir_all(new_parent).expect("Should be able to create assets directory if not there");
+    }
+    fs::write(new_path, content).expect("Should be able to write new string to file in output dir");
 }
 
 struct MatchedClassString {

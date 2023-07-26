@@ -1,0 +1,20 @@
+<main class="message-wrapper">
+	<% for msg in &messages { %> 
+		<div
+			class="message"
+			class:chatbot-message={message.from === 'chatbot'}
+			class:user-message={message.from === 'user'}
+		>
+			<div class="content-wrapper">
+				<div class="circle-wrapper">
+					<div
+						class="circle"
+						class:chatbot-avatar={message.from === 'chatbot'}
+						class:user-avatar={message.from === 'user'}
+					/>
+				</div>
+				<p><%= msg %></p>
+			</div>
+		</div>
+    <% } %>
+</main>

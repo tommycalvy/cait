@@ -15,6 +15,10 @@ struct NavbarTemplate {
     pathname: String,
 }
 
+struct MessagesTemplate {
+    messages: Vec<FakeMessage>,
+}
+
 #[tokio::main]
 async fn main() {
     
@@ -47,3 +51,7 @@ async fn navbar(extract::Path(pathname): extract::Path<String>) -> Html<String> 
     Html(ctx.render_once().unwrap())
 }
 
+struct FakeMessage {
+    from: String,
+    content: String,
+}
