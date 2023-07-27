@@ -1,4 +1,4 @@
-template_dirs = ["templates/output"]
+template_dirs = ["${OUT_DIR}/templates"]
 escape = true
 delimiter = "%"
 

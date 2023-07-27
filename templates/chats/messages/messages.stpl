@@ -1,0 +1,23 @@
+<main class="message-wrapper">
+	<% for msg in &messages { %>
+		<% if msg.from == 'user' { %>
+			<div class="message user-message">
+				<div class="content-wrapper">
+					<div class="circle-wrapper">
+						<div class="circle user-avatar"/>
+					</div>
+					<p><%= msg.content %></p>
+				</div>
+			</div>
+		<% } else if msg.from == 'chatbot' { %> 
+			<div class="message chatbot-message">
+				<div class="content-wrapper">
+					<div class="circle-wrapper">
+						<div class="circle chatbot-avatar"/>
+					</div>
+					<p><%= msg.content %></p>
+				</div>
+			</div>
+		<% } %>
+    <% } %>
+</main>

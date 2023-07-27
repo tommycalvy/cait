@@ -191,9 +191,12 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "cssparser",
+ "dotenv",
  "lightningcss",
  "regex",
  "sailfish",
+ "serde",
+ "serde_json",
  "tokio",
  "tower",
  "tower-http",
@@ -331,6 +334,12 @@ checksum = "3a30bfce702bcfa94e906ef82421f2c0e61c076ad76030c16ee5d2e9a32fe193"
 dependencies = [
  "matches",
 ]
+
+[[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "dtoa"

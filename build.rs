@@ -2,11 +2,12 @@
 use std::{
     fs, convert::Infallible, 
     collections::{HashMap, HashSet, hash_map::RandomState}, 
-    path::Path
+    path::Path,
+    env
 };
 use regex::Regex;
 use cssparser::*;
-use walkdir::{WalkDir, DirEntry};
+use walkdir::WalkDir;
 use lightningcss::{
     error::PrinterError,
     printer::Printer,
@@ -21,13 +22,20 @@ use lightningcss::{
     targets::{Browsers, Targets},
 };
 
+
+
 fn main() {
-    let stpl_templates_dir = "./templates";
-    let stpl_output_dir = "./templates/output";
-    let assets_path = "./assets";
+    let out_path = env::var("OUT_DIR").unwrap();
+    dbg!(&out_path);
+    let templates_dir = "./templates";
+
+    println!("cargo:rerun-if-changed={templates_dir}");
+
+    let stpl_output_dir = format!("{out_path}/templates");
+    let assets_path = format!("{out_path}/assets");
     let styles_file_name = "styles.css";
     let styles_file_path = format!("{assets_path}/{styles_file_name}");
-    if !Path::new(assets_path).is_dir() {
+    if !Path::new(&assets_path).is_dir() {
         fs::create_dir_all(assets_path).expect("Should be able to create assets directory if not there");
     }
     let mut css_minified = String::new();
@@ -43,9 +51,7 @@ fn main() {
         samsung: Some(4 << 16),
     });
 
-    let walker = WalkDir::new(stpl_templates_dir).into_iter();
-    for entry in walker.filter_entry(|e| !is_dir(e, stpl_output_dir))
-        .filter_map(|e| e.ok()) {
+    for entry in WalkDir::new("foo").into_iter().filter_map(|e| e.ok()) {
         let f_name = entry.file_name().to_string_lossy();
         let entry_path = entry.path();
         let file_path = entry_path.to_string_lossy();
@@ -132,7 +138,7 @@ fn main() {
                     hashed_class_list.push('"');
                     content = content.replace(&matched_class.whole, &hashed_class_list);
                 }
-                write_file_to_new_dir(content, entry_path, stpl_file, &stpl_templates_dir, &stpl_output_dir);
+                write_file_to_new_dir(content, entry_path, stpl_file, &templates_dir, &stpl_output_dir);
             }
         }
         if f_name.ends_with(".stpl") {
@@ -141,7 +147,7 @@ fn main() {
             if !css_path.exists() {
                 let content = fs::read_to_string(entry_path)
                     .expect("Should be able to read stpl file to string");
-                write_file_to_new_dir(content, entry_path, file_path.to_string(), &stpl_templates_dir, &stpl_output_dir);
+                write_file_to_new_dir(content, entry_path, file_path.to_string(), &templates_dir, &stpl_output_dir);
             } 
 
         }
@@ -149,13 +155,6 @@ fn main() {
     fs::write(styles_file_path, css_minified).expect("Should be able to write minified css string to file");
     //panic!()
     
-}
-
-fn is_dir(entry: &DirEntry, dir: &str) -> bool {
-    entry.file_name()
-         .to_str()
-         .map(|s| s.starts_with(dir))
-         .unwrap_or(false)
 }
 
 fn write_file_to_new_dir(content: String, entry_path: &Path, file_path: String, old_dir: &str, new_dir: &str) {
