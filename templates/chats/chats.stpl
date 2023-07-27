@@ -6,6 +6,7 @@
     <body>
         <% 
             include!("chat-nav/chat-nav.stpl");
+            include!("messages/messages.stpl");
             include!("../navbar/navbar.stpl"); 
         %>
   </body>
