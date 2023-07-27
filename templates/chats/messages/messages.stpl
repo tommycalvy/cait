@@ -1,19 +1,19 @@
 <main class="message-wrapper">
-	<% for msg in &messages { %>
-		<% if msg.from == 'user' { %>
+	<% for msg in messages { %>
+		<% if msg.from == "user" { %>
 			<div class="message user-message">
 				<div class="content-wrapper">
 					<div class="circle-wrapper">
-						<div class="circle user-avatar"/>
+						<div class="circle user-avatar"></div>
 					</div>
 					<p><%= msg.content %></p>
 				</div>
 			</div>
-		<% } else if msg.from == 'chatbot' { %> 
+		<% } else if msg.from == "chatbot" { %> 
 			<div class="message chatbot-message">
 				<div class="content-wrapper">
 					<div class="circle-wrapper">
-						<div class="circle chatbot-avatar"/>
+						<div class="circle chatbot-avatar"></div>
 					</div>
 					<p><%= msg.content %></p>
 				</div>

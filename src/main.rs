@@ -29,8 +29,7 @@ struct ChatsTemplate<'a> {
 
 #[tokio::main]
 async fn main() {
-    let out_path = env::var("OUT_DIR").unwrap();
-    dbg!(&out_path);
+    let out_path = env!("OUT_DIR");
     let assets_path = format!("{out_path}/assets");
 
     let fake_messages = fs::read_to_string("./src/fake-messages.json")

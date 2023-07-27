@@ -4,9 +4,8 @@
         <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
     </head>
     <body>
-        <h1>Hello World!</h1>
         <% 
-            include!("messages/messages.stpl");
+            include!("chat-nav/chat-nav.stpl");
             include!("../navbar/navbar.stpl"); 
         %>
   </body>

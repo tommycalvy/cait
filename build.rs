@@ -29,7 +29,7 @@ fn main() {
     dbg!(&out_path);
     let templates_dir = "./templates";
 
-    println!("cargo:rerun-if-changed={templates_dir}");
+    //println!("cargo:rerun-if-changed={templates_dir}");
 
     let stpl_output_dir = format!("{out_path}/templates");
     let assets_path = format!("{out_path}/assets");
@@ -51,7 +51,7 @@ fn main() {
         samsung: Some(4 << 16),
     });
 
-    for entry in WalkDir::new("foo").into_iter().filter_map(|e| e.ok()) {
+    for entry in WalkDir::new(templates_dir).into_iter().filter_map(|e| e.ok()) {
         let f_name = entry.file_name().to_string_lossy();
         let entry_path = entry.path();
         let file_path = entry_path.to_string_lossy();

@@ -1,3 +1,15 @@
+.message-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.message {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 2rem 2rem 3rem 1rem;
+}
 .circle-wrapper {
     width: 5rem;
 }
@@ -19,22 +31,10 @@
 .chatbot-message {
     background-color: var(--color-chatbot-bg);
 }
-.message {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    padding: 2rem 2rem 3rem 1rem;
-}
 .content-wrapper {
     display: flex;
     width: 50rem;
 }
 .message p {
     margin-top: 0.5rem;
-}
-.message-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
