@@ -16,9 +16,8 @@
     padding: 1rem 1rem;
 }
 
-.unused-class {
-    display: flex;
+.spacer {
     width: 100%;
-    color: black;
-    align-items: center;
+    background-color: var(--color-surface);
+    min-height: 4rem;
 }

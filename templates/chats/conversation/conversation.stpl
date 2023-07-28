@@ -1,0 +1,13 @@
+<html>
+    <head> 
+        <title>Cait - Knowledge Base Chatbot with Access Controls</title>
+        <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
+    </head>
+    <body>
+        <% 
+            include!("nav/nav.stpl");
+            include!("../messages/messages.stpl");
+            include!("input/input.stpl");
+        %>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+    <head> 
+        <title>Cait - Knowledge Base Chatbot with Access Controls</title>
+        <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
+    </head>
+    <body>
+        <header class="settings-header">
+            <h3>Settings</h3>
+        </header>
+        <main class="settings">
+            <h3>Theme Preferences</h3>
+            <div class="theme-preference">
+                <select>
+                    <option value="select">Single theme</option>
+                    <option value="system">Sync with system</option>
+                </select>
+                <label>
+                    <span class="light-span">Light</span>
+                    <input type="checkbox"/>
+                    <span class="slider">
+                        <span class="icon-part"></span>
+                        <span class="icon-part"></span>
+                        <span class="icon-part"></span>
+                        <span class="icon-part"></span>
+                        <span class="icon-part"></span>
+                        <span class="icon-part"></span>
+                        <span class="icon-part"></span>
+                        <span class="icon-part"></span>
+                        <span class="icon-part"></span>
+                    </span>
+                    <span class="dark-span">Dark</span>
+                </label>
+            </div>
+        </main>
+        <% include!("../navbar/navbar.stpl"); %>
+    </body>
+</html>

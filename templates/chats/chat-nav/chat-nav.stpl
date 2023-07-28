@@ -1,11 +1,11 @@
 <div class="spacer">
 </div>
 <nav class="chat-nav">
-    <a href="/chats/edit">
+    <a href="/chats/edit" class="button">
         <p>Edit</p>
     </a>
     <h3>Chats</h3>
-    <a href="/chats/new">
+    <a href="/chats/new" class="button">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

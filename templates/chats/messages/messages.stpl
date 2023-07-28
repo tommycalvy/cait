@@ -1,3 +1,4 @@
+<% include!("../search-bar/search-bar.stpl"); %>
 <main class="message-wrapper">
 	<% for msg in messages { %>
 		<% if msg.from == "user" { %>

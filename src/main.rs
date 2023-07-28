@@ -20,12 +20,26 @@ struct NavbarTemplate {
     pathname: String,
 }
 
-#[derive(TemplateOnce)]  // automatically implement `TemplateOnce` trait
-#[template(path = "chats/chats.stpl")]  // specify the path to template
+#[derive(TemplateOnce)]  
+#[template(path = "chats/chats.stpl")]  
 struct ChatsTemplate<'a> {
     messages: &'a Vec<FakeMessage>,
     pathname: &'a str,
 }
+
+#[derive(TemplateOnce)]  
+#[template(path = "settings/settings.stpl")]  
+struct SettingsTemplate<'a> {
+    pathname: &'a str,
+}
+
+#[derive(TemplateOnce)]  
+#[template(path = "chats/conversation/conversation.stpl")]  
+struct ConversationTemplate<'a> {
+    messages: &'a Vec<FakeMessage>,
+    id: &'a str,
+}
+
 
 #[tokio::main]
 async fn main() {
@@ -38,17 +52,12 @@ async fn main() {
         .expect("Should be able to parse fake-message json from string");
     let shared_fm_list = Arc::new(fm_list);
     
-
-    
     let app = Router::new()
         .route("/", get(home))
-        .route(
-            "/chats", 
-            get({
-                let shared_fm_list = Arc::clone(&shared_fm_list);
-                move || chats(shared_fm_list)
-            }),
-        )
+        .route("/chats", get(chats))
+        .route("/chats/:id", get(conversation))
+        .layer(axum::Extension(shared_fm_list))
+        .route("/settings", get(settings))
         .route("/:pathname", get(navbar))
         .nest_service("/assets", ServeDir::new(&assets_path));
 
@@ -76,10 +85,28 @@ async fn navbar(extract::Path(pathname): extract::Path<String>) -> Html<String> 
     Html(ctx.render_once().unwrap())
 }
 
-async fn chats(fm_list: Arc<Vec<FakeMessage>>) -> Html<String> {
+async fn chats(axum::Extension(fm_list): axum::Extension<Arc<Vec<FakeMessage>>>) -> Html<String> {
     let ctx = ChatsTemplate {
         messages: fm_list.as_ref(),
         pathname: "chats",
+    };
+    Html(ctx.render_once().unwrap())
+}
+
+async fn conversation(
+    extract::Path(id): extract::Path<String>, 
+    axum::Extension(fm_list): axum::Extension<Arc<Vec<FakeMessage>>>
+) -> Html<String> {
+    let ctx = ConversationTemplate {
+        messages: fm_list.as_ref(),
+        id: &id,
+    };
+    Html(ctx.render_once().unwrap())
+}
+
+async fn settings() -> Html<String> {
+    let ctx = SettingsTemplate {
+        pathname: "settings",
     };
     Html(ctx.render_once().unwrap())
 }
