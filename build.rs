@@ -21,6 +21,7 @@ use lightningcss::{
     vendor_prefix::VendorPrefix,
     targets::{Browsers, Targets},
 };
+use reqwest;
 
 
 
@@ -33,11 +34,20 @@ fn main() {
 
     let stpl_output_dir = format!("{out_path}/templates");
     let assets_path = format!("{out_path}/assets");
+
     let styles_file_name = "styles.css";
     let styles_file_path = format!("{assets_path}/{styles_file_name}");
     if !Path::new(&assets_path).is_dir() {
-        fs::create_dir_all(assets_path).expect("Should be able to create assets directory if not there");
+        fs::create_dir_all(&assets_path).expect("Should be able to create assets directory if not there");
     }
+
+    // Download htmx js library to the assets folder
+    let htmx_file_path = format!("{assets_path}/htmx.min.js");
+    let htmx_body = reqwest::blocking::get("https://unpkg.com/htmx.org@1.9.4/dist/htmx.min.js")
+        .expect("Should be able to download htmx source code");
+    let htmx_text = htmx_body.text().expect("Should be able to convert htmx body to text");
+    fs::write(htmx_file_path, htmx_text).expect("Should be able to write htmx text to file");
+
     let mut css_minified = String::new();
     let targets: Targets = Targets::from(Browsers {
         safari: Some((9 << 16) | (3 << 8)),
@@ -55,7 +65,7 @@ fn main() {
         let f_name = entry.file_name().to_string_lossy();
         let entry_path = entry.path();
         let file_path = entry_path.to_string_lossy();
-        dbg!(&file_path);
+        //dbg!(&file_path);
         if f_name.ends_with(".css") {
             let css_string = fs::read_to_string(entry.path())
                 .expect("Should have been able to read string from css file");

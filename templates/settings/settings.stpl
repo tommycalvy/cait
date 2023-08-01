@@ -2,6 +2,7 @@
     <head> 
         <title>Cait - Knowledge Base Chatbot with Access Controls</title>
         <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
+        <script src="/assets/htmx.min.js" defer></script>
     </head>
     <body>
         <header class="settings-header">
@@ -10,7 +11,7 @@
         <main class="settings">
             <h3>Theme Preferences</h3>
             <div class="theme-preference">
-                <select>
+                <select id="system-or-select">
                     <% match color_scheme.color_mode { 
                         ColorMode::Select => { %>
                             <option value="select" selected >Single theme</option>
@@ -26,7 +27,7 @@
                     <span class="light-span">Light</span>
                     <% match color_scheme.selected_color { 
                         Theme::Dark => { %>
-                            <input type="checkbox" checked />
+                            <input id="theme-toggle" type="checkbox" checked />
                         <% }, 
                         Theme::Light => { %>
                             <input type="checkbox"/>
@@ -48,5 +49,37 @@
             </div>
         </main>
         <% include!("../navbar/navbar.stpl"); %>
+        <script>
+            document.getElementById('theme-toggle').addEventListener('change', function () {
+                var element = document.documentElement;
+                if (this.checked) {
+                    element.classList.remove('light');
+                    element.classList.add('dark');
+                    document.cookie = "color_scheme=dark; path=/";
+                } else {
+                    element.classList.remove('dark');
+                    element.classList.add('light');
+                }
+            });
+            document.getElementById('system-or-select').addEventListener('change', function () {
+                var themeToggle = document.getElementById('theme-toggle');
+                var element = document.documentElement;
+                if (this.value === 'system') {
+                    element.classList.remove('light');
+                    element.classList.remove('dark');
+                    element.classList.add('system');
+                    themeToggle.disabled = true;
+                } else {
+                    themeToggle.disabled = false;
+                    if (themeToggle.checked) {
+                        element.classList.remove('system');
+                        element.classList.add('dark');
+                    } else {
+                        element.classList.remove('system');
+                        element.classList.add('light');
+                    }
+                }
+            });
+        </script>
     </body>
 </html>
