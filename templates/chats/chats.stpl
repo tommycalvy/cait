@@ -1,4 +1,4 @@
-<html>
+<html class="<%= color_scheme.class %>">
     <head> 
         <title>Cait - Knowledge Base Chatbot with Access Controls</title>
         <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
@@ -6,6 +6,7 @@
     <body>
         <% 
             include!("chat-nav/chat-nav.stpl");
+            include!("search-bar/search-bar.stpl");
             include!("messages/messages.stpl");
             include!("../navbar/navbar.stpl"); 
         %>

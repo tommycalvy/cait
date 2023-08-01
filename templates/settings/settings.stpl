@@ -1,4 +1,4 @@
-<html>
+<html class="<%= color_scheme.class %>">
     <head> 
         <title>Cait - Knowledge Base Chatbot with Access Controls</title>
         <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
@@ -11,12 +11,27 @@
             <h3>Theme Preferences</h3>
             <div class="theme-preference">
                 <select>
-                    <option value="select">Single theme</option>
-                    <option value="system">Sync with system</option>
+                    <% match color_scheme.color_mode { 
+                        ColorMode::Select => { %>
+                            <option value="select" selected >Single theme</option>
+                            <option value="system">Sync with system</option>
+                        <% }, 
+                        ColorMode::System => { %>
+                            <option value="select">Single theme</option>
+                            <option value="system" selected >Sync with system</option>
+                        <% },
+                    } %>
                 </select>
                 <label>
                     <span class="light-span">Light</span>
-                    <input type="checkbox"/>
+                    <% match color_scheme.selected_color { 
+                        Theme::Dark => { %>
+                            <input type="checkbox" checked />
+                        <% }, 
+                        Theme::Light => { %>
+                            <input type="checkbox"/>
+                        <% },
+                    } %>
                     <span class="slider">
                         <span class="icon-part"></span>
                         <span class="icon-part"></span>

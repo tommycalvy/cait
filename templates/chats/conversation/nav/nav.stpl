@@ -1,5 +1,5 @@
 <nav class="conversation-nav">
-	<a href="/chats">
+	<a href="/chats" class="button">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
@@ -12,6 +12,6 @@
 		</svg>
 	</a>
 	<h3>Hello <%= id %></h3>
-	<div class="placeholder" />
+	<div class="placeholder"></div>
 </nav>
-<div class="spacer" />
+<div class="spacer"></div>

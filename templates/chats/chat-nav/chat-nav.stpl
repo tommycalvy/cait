@@ -5,7 +5,7 @@
         <p>Edit</p>
     </a>
     <h3>Chats</h3>
-    <a href="/chats/new" class="button">
+    <a href="/chats/Tommy" class="button">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

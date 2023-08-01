@@ -112,7 +112,7 @@ fn main() {
                 unused_symbols.insert(symbol);
             }
 
-            stylesheet.minify(MinifyOptions { 
+            stylesheet.minify(MinifyOptions {
                 targets,
                 unused_symbols,
             }).unwrap();
@@ -130,10 +130,14 @@ fn main() {
                 for matched_class in matched_classes {
                     let mut hashed_class_list = String::from("class=\"");
                     for class in matched_class.list {
+                        // If class has a hashed_class then add the hashed_class otherwise add the class
                         if let Some(hashed_class) = exported_css_classes.get(&class) {
                             hashed_class_list.push_str(&hashed_class.name);
-                            hashed_class_list.push(' ');
+                        } else {
+                            hashed_class_list.push_str(&class);
+
                         }
+                        hashed_class_list.push(' ');
                     }
                     hashed_class_list.push('"');
                     content = content.replace(&matched_class.whole, &hashed_class_list);

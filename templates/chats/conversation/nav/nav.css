@@ -28,3 +28,16 @@
     height: 2rem;
     color: var(--color-primary-icon);
 }
+.button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    color: var(--color-primary-icon);
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+.button:visited, .button:active {
+    color: var(--color-primary-icon);
+}
