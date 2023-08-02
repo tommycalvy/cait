@@ -1,5 +1,6 @@
 .settings {
     margin: 6rem 0 4rem 0;
+    padding: 0 2rem;
 }
 .settings-header {
     display: flex;
@@ -42,11 +43,11 @@
     background-color: oklch(79.8% 0.099 92.65 / 50%);
     cursor: not-allowed;
 }
-.light-span {
+.toggle-span {
     user-select: none;
 }
-.dark-span {
-    user-select: none;
+:global(.toggle-span-disabled) {
+    filter: opacity(50%);
 }
 .slider {
     position: absolute;
@@ -67,10 +68,10 @@
     cursor: not-allowed;
 }
 .settings input:checked {
-    background-color: oklch(29.85% 0.072 240.88);
+    background-color: oklch(32.4% 0.072 240.88);
 }
 .settings input:checked:disabled {
-    background-color: oklch(34.71% 0.072 240.88 / 20%);
+    background-color: oklch(32.4% 0.072 240.88 / 22%);
     cursor: not-allowed;
 }
 .settings input:checked + .slider {
@@ -83,7 +84,7 @@
 }
 @media (prefers-color-scheme: dark) {
     .settings input:disabled {
-        background-color: oklch(79.8% 0.099 92.65 / 30%);
+        background-color: oklch(79.8% 0.099 92.65 / 35%);
         cursor: not-allowed;
     }
     .settings input:disabled + .slider {
@@ -95,7 +96,7 @@
         cursor: not-allowed;
     }
     .settings input:checked:disabled {
-        background-color: oklch(34.71% 0.072 240.88 / 40%);
+        background-color: oklch(32.4% 0.072 240.88 / 50%);
         cursor: not-allowed;
     }
 }

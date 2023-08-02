@@ -155,7 +155,6 @@ enum Theme {
 struct ColorScheme {
     color_mode: ColorMode,
     selected_color: Theme,
-    preferred_color: Theme,
     class: String,
 }
 
@@ -164,7 +163,6 @@ impl ColorScheme {
         ColorScheme { 
             color_mode: ColorMode::System,
             selected_color: Theme::Light,
-            preferred_color: Theme::Light,
             class: String::from("system"),
         }
     }
@@ -184,13 +182,6 @@ impl ColorScheme {
             },
             _ => Theme::Light,
         };
-        let preferred_color: Theme = match &v["preferred_color"] {
-            Value::String(theme) => match theme.as_str() {
-                "dark" => Theme::Dark,
-                _ => Theme::Light
-            },
-            _ => Theme::Light,
-        };
         let class = match color_mode {
             ColorMode::System => String::from(""),
             ColorMode::Select => match selected_color {
@@ -198,7 +189,7 @@ impl ColorScheme {
                 Theme::Light => String::from("light"),
             }
         };
-        Ok(ColorScheme { color_mode, selected_color, preferred_color, class })
+        Ok(ColorScheme { color_mode, selected_color, class })
     }
 
     fn color_mode(&self) -> &str {
@@ -215,18 +206,10 @@ impl ColorScheme {
         }
     }
 
-    fn preferred_color(&self) -> &str {
-        match self.preferred_color {
-            Theme::Dark => "dark",
-            Theme::Light => "light",
-        }
-    }
-
     fn to_cookie_value(&self) -> String {
         let color_mode = self.color_mode();
         let selected_color = self.selected_color();
-        let preferred_color = self.preferred_color();
-        format!("{{\"color_mode\":\"{color_mode}\", \"selected_color\":\"{selected_color}\", \"preferred_color\":\"{preferred_color}\"}}")
+        format!("{{\"color_mode\":\"{color_mode}\", \"selected_color\":\"{selected_color}\"}}")
     }
 }
 
