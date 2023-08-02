@@ -1,4 +1,3 @@
-<div class="spacer"></div>
 <nav class="bottom-nav">
 	<a href="/" aria-label="Home">
 		<% if pathname == "" { %>

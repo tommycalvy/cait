@@ -26,12 +26,22 @@
                 <label>
                     <span class="light-span">Light</span>
                     <% match color_scheme.selected_color { 
-                        Theme::Dark => { %>
-                            <input id="theme-toggle" type="checkbox" checked />
-                        <% }, 
-                        Theme::Light => { %>
-                            <input type="checkbox"/>
-                        <% },
+                        Theme::Dark => match color_scheme.color_mode { 
+                            ColorMode::Select => { %>
+                                <input id="theme-toggle" type="checkbox" checked />
+                            <% },
+                            ColorMode::System => { %>
+                                <input id="theme-toggle" type="checkbox" checked disabled />
+                            <% },
+                        }
+                        Theme::Light => match color_scheme.color_mode {
+                            ColorMode::Select => { %>
+                                <input id="theme-toggle" type="checkbox" />
+                            <% },
+                            ColorMode::System => { %>
+                                <input id="theme-toggle" type="checkbox" disabled />
+                            <% },
+                        },
                     } %>
                     <span class="slider">
                         <span class="icon-part"></span>
@@ -55,7 +65,7 @@
                 if (this.checked) {
                     element.classList.remove('light');
                     element.classList.add('dark');
-                    document.cookie = "color_scheme=dark; path=/";
+                    //document.cookie = "color_scheme=dark; path=/";
                 } else {
                     element.classList.remove('dark');
                     element.classList.add('light');
@@ -67,15 +77,12 @@
                 if (this.value === 'system') {
                     element.classList.remove('light');
                     element.classList.remove('dark');
-                    element.classList.add('system');
                     themeToggle.disabled = true;
                 } else {
                     themeToggle.disabled = false;
                     if (themeToggle.checked) {
-                        element.classList.remove('system');
                         element.classList.add('dark');
                     } else {
-                        element.classList.remove('system');
                         element.classList.add('light');
                     }
                 }

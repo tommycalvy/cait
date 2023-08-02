@@ -38,3 +38,8 @@
 .message p {
     margin-top: 0.5rem;
 }
+.spacer {
+    width: 100%;
+    background-color: var(--color-surface);
+    min-height: 4rem;
+}

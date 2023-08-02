@@ -15,9 +15,3 @@
     width: 5rem;
     padding: 1rem 1rem;
 }
-
-.spacer {
-    width: 100%;
-    background-color: var(--color-surface);
-    min-height: 4rem;
-}

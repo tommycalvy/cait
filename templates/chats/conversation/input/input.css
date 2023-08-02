@@ -29,11 +29,6 @@
 .button-wrapper button:focus {
     outline: var(--color-primary) solid 0.1rem;
 }
-.spacer {
-    width: 100%;
-    background-color: var(--color-surface);
-    min-height: 6rem;
-}
 .prompt {
     position: fixed;
     bottom: 0;

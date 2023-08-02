@@ -192,7 +192,7 @@ impl ColorScheme {
             _ => Theme::Light,
         };
         let class = match color_mode {
-            ColorMode::System => String::from("system"),
+            ColorMode::System => String::from(""),
             ColorMode::Select => match selected_color {
                 Theme::Dark => String::from("dark"),
                 Theme::Light => String::from("light"),
