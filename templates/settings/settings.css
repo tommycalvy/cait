@@ -103,7 +103,7 @@
 .icon-part {
     position: absolute;
     border-radius: 50%;
-    box-shadow: 0.4rem -0.4rem 0 0.5rem oklch(100% 0 0) inset;
+    box-shadow: 0.4rem -0.4rem 0 0.5rem #ffffff inset;
     top: calc(50% - 0.4rem);
     left: calc(50% - 0.4rem);
     width: 0.8rem;
@@ -113,10 +113,10 @@
     transform: scale(0.5);
 }
 .settings input:disabled + .slider .icon-part {
-    box-shadow: 0.4rem -0.4rem 0 0.5rem oklch(100% 0 0 / 50%) inset;
+    box-shadow: 0.4rem -0.4rem 0 0.5rem #ffffff80 inset;
 }
 .icon-part ~ .icon-part {
-    background-color: oklch(100% 0 0);
+    background-color: #ffffff;
     border-radius: 0.05rem;
     box-shadow: none;
     top: 50%;
@@ -127,7 +127,7 @@
     height: 0.2rem;
 }
 .settings input:disabled + .slider .icon-part ~ .icon-part {
-    background-color: oklch(100% 0 0 / 50%);
+    background-color: #ffffff80;
 }
 .icon-part:nth-child(3) {
     transform: rotate(45deg) translateY(0.4rem);
@@ -152,10 +152,10 @@
 }
 .settings input:checked ~ .slider .icon-part:nth-child(1) {
     transform: scale(1);
-    box-shadow: 0.2rem -0.2rem 0 0.2rem hsl(0, 0%, 100%) inset;
+    box-shadow: 0.2rem -0.2rem 0 0.2rem #ffffff inset;
 }
 .settings input:checked:disabled ~ .slider .icon-part:nth-child(1) {
-    box-shadow: 0.2rem -0.2rem 0 0.2rem oklch(100% 0 0 / 50%) inset;
+    box-shadow: 0.2rem -0.2rem 0 0.2rem #ffffff80 inset;
 }
 .settings input:checked ~ .slider .icon-part ~ .icon-part {
     opacity: 0;

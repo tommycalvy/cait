@@ -23,8 +23,6 @@ use lightningcss::{
 };
 use reqwest;
 
-
-
 fn main() {
     let out_path = env::var("OUT_DIR").unwrap();
     dbg!(&out_path);
@@ -41,12 +39,14 @@ fn main() {
         fs::create_dir_all(&assets_path).expect("Should be able to create assets directory if not there");
     }
 
-    // Download htmx js library to the assets folder
+    // Download htmx js library to the assets folder if it doesn't already exist there
     let htmx_file_path = format!("{assets_path}/htmx.min.js");
-    let htmx_body = reqwest::blocking::get("https://unpkg.com/htmx.org@1.9.4/dist/htmx.min.js")
-        .expect("Should be able to download htmx source code");
-    let htmx_text = htmx_body.text().expect("Should be able to convert htmx body to text");
-    fs::write(htmx_file_path, htmx_text).expect("Should be able to write htmx text to file");
+    if !Path::new(&htmx_file_path).is_file() {
+        let htmx_body = reqwest::blocking::get("https://unpkg.com/htmx.org@1.9.4/dist/htmx.min.js")
+            .expect("Should be able to download htmx source code");
+        let htmx_text = htmx_body.text().expect("Should be able to convert htmx body to text");
+        fs::write(htmx_file_path, htmx_text).expect("Should be able to write htmx text to file");
+    }
 
     let mut css_minified = String::new();
     let targets: Targets = Targets::from(Browsers {
