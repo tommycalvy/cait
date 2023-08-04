@@ -30,7 +30,7 @@ fn main() {
 
     //println!("cargo:rerun-if-changed={templates_dir}");
 
-    let stpl_output_dir = format!("{out_path}/templates");
+    let html_output_dir = format!("{out_path}/templates");
     let assets_path = format!("{out_path}/assets");
 
     let styles_file_name = "styles.css";
@@ -88,11 +88,11 @@ fn main() {
 
             let mut matched_classes: Vec<MatchedClassString> = Vec::new();
             
-            // Removes classes from style_rules hashmap that aren't in the stpl files
-            let stpl_file = file_path.replace(".css", ".stpl");
-            if let Ok(stpl_string) = fs::read_to_string(&stpl_file) {
+            // Removes classes from style_rules hashmap that aren't in the html files
+            let html_file = file_path.replace(".css", ".html");
+            if let Ok(html_string) = fs::read_to_string(&html_file) {
                 let re = Regex::new("class\\s{0,1}=\\s{0,1}[\"\']([^\"\']*)[\"\']").unwrap();
-                for cap in re.captures_iter(&stpl_string) {
+                for cap in re.captures_iter(&html_string) {
                     if let Some(whole_class_string) = cap.get(0) {
                         let whole_class_string = whole_class_string.as_str();
                         
@@ -134,8 +134,8 @@ fn main() {
             }).unwrap();
             css_minified.insert_str(0, &res.code);
 
-            // Break down saved classes from stpl file, find their replacements, generate new class strings, and replace 
-            if let Ok(mut content) = fs::read_to_string(&stpl_file) {
+            // Break down saved classes from html file, find their replacements, generate new class strings, and replace 
+            if let Ok(mut content) = fs::read_to_string(&html_file) {
                 let exported_css_classes = res.exports.unwrap();
                 for matched_class in matched_classes {
                     let mut hashed_class_list = String::from("class=\"");
@@ -152,16 +152,32 @@ fn main() {
                     hashed_class_list.push('"');
                     content = content.replace(&matched_class.whole, &hashed_class_list);
                 }
-                write_file_to_new_dir(content, entry_path, stpl_file, &templates_dir, &stpl_output_dir);
+                write_file_to_new_dir(
+                    content, 
+                    entry_path, 
+                    html_file, 
+                    ".html",
+                    ".stpl",
+                    &templates_dir, 
+                    &html_output_dir
+                );
             }
         }
-        if f_name.ends_with(".stpl") {
-            let css_file = file_path.replace(".stpl", ".css");
+        if f_name.ends_with(".html") {
+            let css_file = file_path.replace(".html", ".css");
             let css_path = Path::new(&css_file);
             if !css_path.exists() {
                 let content = fs::read_to_string(entry_path)
-                    .expect("Should be able to read stpl file to string");
-                write_file_to_new_dir(content, entry_path, file_path.to_string(), &templates_dir, &stpl_output_dir);
+                    .expect("Should be able to read html file to string");
+                write_file_to_new_dir(
+                    content, 
+                    entry_path, 
+                    file_path.to_string(), 
+                    ".html",
+                    ".stpl",
+                    &templates_dir, 
+                    &html_output_dir
+                );
             } 
 
         }
@@ -171,9 +187,18 @@ fn main() {
     
 }
 
-fn write_file_to_new_dir(content: String, entry_path: &Path, file_path: String, old_dir: &str, new_dir: &str) {
+fn write_file_to_new_dir(
+    content: String, 
+    entry_path: &Path, 
+    file_path: String, 
+    old_extension: &str, 
+    new_extension: &str, 
+    old_dir: &str, 
+    new_dir: &str
+) {
     
     let stem = file_path.strip_prefix(&old_dir).unwrap();
+    let stem = stem.replace(old_extension, new_extension);
     let new_path = format!("{new_dir}/{stem}");
 
     let parent_stem = entry_path.parent().unwrap()
