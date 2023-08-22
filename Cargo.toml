@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sailfish = "0.7.0"
 axum = "0.6.18"
 tokio = { version = "1.29.1", features = ["full"] }
 tower = { version = "0.4", features = ["util"] }
@@ -17,12 +16,15 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 axum-extra = { version = "0.7.5", features = ["cookie"] }
 cookie = "0.17.0"
+sailfish = "0.8.0"
+llm-chain-llama = "0.12.3"
+llm-chain = "0.12.3"
 
 
 [build-dependencies]
 walkdir = "2"
-lightningcss = { version = "1.0.0-alpha.44", features = ["bundler", "visitor"]}
-cssparser = "0.29.1"
+lightningcss = { version = "1.0.0-alpha.45", features = ["visitor"]}
 regex = "1.9.1"
 dotenv = "0.15.0"
 reqwest = { version = "0.11", features = ["blocking"] }
+cssparser = "0.29.1"

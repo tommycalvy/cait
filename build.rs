@@ -1,40 +1,35 @@
 //use core::panic;
 use std::{
-    fs, convert::Infallible, 
-    collections::{HashMap, HashSet, hash_map::RandomState}, 
+    fs,
     path::Path,
-    env
+    env,
+    collections::HashMap, 
 };
-use regex::Regex;
-use cssparser::*;
-use walkdir::WalkDir;
+use walkdir::{WalkDir, DirEntry};
 use lightningcss::{
-    error::PrinterError,
-    printer::Printer,
-    traits::{AtRuleParser, ToCss},
-    selector::Component,
-    declaration::DeclarationBlock,
-    rules::{style::StyleRule, CssRule, CssRuleList, Location},
-    css_modules,
     stylesheet::{ParserOptions, MinifyOptions, PrinterOptions, StyleSheet, ParserFlags},
-    visitor::{Visitor, Visit, VisitTypes},
-    vendor_prefix::VendorPrefix,
     targets::{Browsers, Targets},
+    visitor::{Visitor, Visit, VisitTypes},
+    traits::{AtRuleParser, ToCss},
+    rules::{style::StyleRule, CssRule, CssRuleList, Location},
+    printer::Printer,
+    error::PrinterError,
+    declaration::DeclarationBlock,
+    selector::Component,
+    vendor_prefix::VendorPrefix,
 };
 use reqwest;
+use std::convert::Infallible;
+use cssparser;
+use cssparser::_cssparser_internal_to_lowercase;
 
 fn main() {
     let out_path = env::var("OUT_DIR").unwrap();
     dbg!(&out_path);
-    let templates_dir = "./templates";
 
     //println!("cargo:rerun-if-changed={templates_dir}");
 
-    let html_output_dir = format!("{out_path}/templates");
     let assets_path = format!("{out_path}/assets");
-
-    let styles_file_name = "styles.css";
-    let styles_file_path = format!("{assets_path}/{styles_file_name}");
     if !Path::new(&assets_path).is_dir() {
         fs::create_dir_all(&assets_path).expect("Should be able to create assets directory if not there");
     }
@@ -48,7 +43,8 @@ fn main() {
         fs::write(htmx_file_path, htmx_text).expect("Should be able to write htmx text to file");
     }
 
-    let mut css_minified = String::new();
+
+    // lightning css
     let targets: Targets = Targets::from(Browsers {
         safari: Some((9 << 16) | (3 << 8)),
         chrome: Some(69 << 16),
@@ -61,168 +57,61 @@ fn main() {
         samsung: Some(4 << 16),
     });
 
-    for entry in WalkDir::new(templates_dir).into_iter().filter_map(|e| e.ok()) {
-        let f_name = entry.file_name().to_string_lossy();
-        let entry_path = entry.path();
-        let file_path = entry_path.to_string_lossy();
-        //dbg!(&file_path);
-        if f_name.ends_with(".css") {
-            let css_string = fs::read_to_string(entry.path())
+
+    let ui_dirs = vec!["pages", "templates", "components"];
+    let mut css_combined_string = String::new();
+    for dir in ui_dirs {
+        let walker = WalkDir::new(dir).into_iter();
+        for entry in walker.filter_entry(|e| is_css_file(e)) {
+            if let Ok(css_file) = entry {
+                let css_string = fs::read_to_string(css_file.path())
                 .expect("Should have been able to read string from css file");
-
-            let mut stylesheet = StyleSheet::parse_with(
-                &css_string, 
-                ParserOptions {
-                    filename: f_name.to_string(),
-                    flags: ParserFlags::NESTING,
-                    css_modules: Some(css_modules::Config::default()),
-                    ..ParserOptions::default()
-                }, 
-                &mut ApplyAtRuleParser
-            ).unwrap();
-
-            let mut style_rules: HashMap<String, DeclarationBlock<'_>> = HashMap::new();
-            stylesheet.visit(&mut ApplyVisitor {
-                rules: &mut style_rules,
-            }).unwrap();
-
-            let mut matched_classes: Vec<MatchedClassString> = Vec::new();
-            
-            // Removes classes from style_rules hashmap that aren't in the html files
-            let html_file = file_path.replace(".css", ".html");
-            if let Ok(html_string) = fs::read_to_string(&html_file) {
-                let re = Regex::new("class\\s{0,1}=\\s{0,1}[\"\']([^\"\']*)[\"\']").unwrap();
-                for cap in re.captures_iter(&html_string) {
-                    if let Some(whole_class_string) = cap.get(0) {
-                        let whole_class_string = whole_class_string.as_str();
-                        
-                        // Get the capture group of the regex which removes the class=""
-                        let separated_classes = cap.get(1).expect("Should have capture group of classes");
-                        let mut class_list: Vec<String> = Vec::new();
-                        // Now we just need to split the classes by the whitespace between them
-                        for class in separated_classes.as_str().split_whitespace() {
-                            style_rules.remove(class);
-                            class_list.push(class.to_string());
-                        }
-                        // Save class_list for later for the replacing stage
-                        matched_classes.push(
-                            MatchedClassString { 
-                                whole: String::from(whole_class_string), 
-                                list: class_list 
-                            }
-                        );
-                    }
-                }
-            };
-            
-            
-            // Convert remaining symbols in style_rules hashmap to a hashset put in minify options
-            let mut unused_symbols: HashSet<String, RandomState> = HashSet::new();
-            for symbol in style_rules.into_keys() {
-                unused_symbols.insert(symbol);
+                css_combined_string.push_str(&css_string);
             }
-
-            stylesheet.minify(MinifyOptions {
-                targets,
-                unused_symbols,
-            }).unwrap();
-            
-            let res = stylesheet.to_css(PrinterOptions {
-                //minify: true,
-                targets,
-                ..PrinterOptions::default()
-            }).unwrap();
-            css_minified.insert_str(0, &res.code);
-
-            // Break down saved classes from html file, find their replacements, generate new class strings, and replace 
-            if let Ok(mut content) = fs::read_to_string(&html_file) {
-                let exported_css_classes = res.exports.unwrap();
-                for matched_class in matched_classes {
-                    let mut hashed_class_list = String::from("class=\"");
-                    for class in matched_class.list {
-                        // If class has a hashed_class then add the hashed_class otherwise add the class
-                        if let Some(hashed_class) = exported_css_classes.get(&class) {
-                            hashed_class_list.push_str(&hashed_class.name);
-                        } else {
-                            hashed_class_list.push_str(&class);
-
-                        }
-                        hashed_class_list.push(' ');
-                    }
-                    hashed_class_list.push('"');
-                    content = content.replace(&matched_class.whole, &hashed_class_list);
-                }
-                write_file_to_new_dir(
-                    content, 
-                    entry_path, 
-                    html_file, 
-                    ".html",
-                    ".stpl",
-                    &templates_dir, 
-                    &html_output_dir
-                );
-            }
-        }
-        if f_name.ends_with(".html") {
-            let css_file = file_path.replace(".html", ".css");
-            let css_path = Path::new(&css_file);
-            if !css_path.exists() {
-                let content = fs::read_to_string(entry_path)
-                    .expect("Should be able to read html file to string");
-                write_file_to_new_dir(
-                    content, 
-                    entry_path, 
-                    file_path.to_string(), 
-                    ".html",
-                    ".stpl",
-                    &templates_dir, 
-                    &html_output_dir
-                );
-            } 
-
         }
     }
-    fs::write(styles_file_path, css_minified).expect("Should be able to write minified css string to file");
+    
+
+    let styles_file_name = "styles.css";
+    let styles_file_path = format!("{assets_path}/{styles_file_name}");
+
+    let mut stylesheet = StyleSheet::parse(
+        &css_combined_string, 
+        ParserOptions {
+            filename: styles_file_name.to_string(),
+            flags: ParserFlags::NESTING,
+            ..ParserOptions::default()
+        }
+    ).unwrap();
+      
+    stylesheet.minify(MinifyOptions {
+        targets,
+        ..MinifyOptions::default()
+    }).unwrap();
+    
+    let res = stylesheet.to_css(PrinterOptions {
+        //minify: true,
+        targets,
+        ..PrinterOptions::default()
+    }).unwrap();
+
+    fs::write(styles_file_path, res.code).expect("Should be able to write minified css string to file");
     //panic!()
     
 }
 
-fn write_file_to_new_dir(
-    content: String, 
-    entry_path: &Path, 
-    file_path: String, 
-    old_extension: &str, 
-    new_extension: &str, 
-    old_dir: &str, 
-    new_dir: &str
-) {
-    
-    let stem = file_path.strip_prefix(&old_dir).unwrap();
-    let stem = stem.replace(old_extension, new_extension);
-    let new_path = format!("{new_dir}/{stem}");
-
-    let parent_stem = entry_path.parent().unwrap()
-        .strip_prefix(&old_dir).unwrap().to_string_lossy();
-
-
-    let new_parent = format!("{new_dir}/{parent_stem}");
-    
-    if !Path::new(&new_parent).is_dir() {
-        fs::create_dir_all(new_parent).expect("Should be able to create assets directory if not there");
-    }
-    fs::write(new_path, content).expect("Should be able to write new string to file in output dir");
-}
-
-struct MatchedClassString {
-    whole: String,
-    list: Vec<String>
+fn is_css_file(entry: &DirEntry) -> bool {
+    entry.file_name()
+         .to_str()
+         .map(|s| s.ends_with(".css"))
+         .unwrap_or(false)
 }
 
 /// An @apply rule.
 #[derive(Debug, Clone)]
 struct ApplyRule {
   names: Vec<String>,
-  loc: SourceLocation,
+  loc: cssparser::SourceLocation,
 }
 
 #[derive(Debug, Clone)]
@@ -234,11 +123,11 @@ impl<'i> AtRuleParser<'i> for ApplyAtRuleParser {
 
     fn parse_prelude<'t>(
         &mut self,
-        name: CowRcStr<'i>,
-        input: &mut Parser<'i, 't>,
+        name: cssparser::CowRcStr<'i>,
+        input: &mut cssparser::Parser<'i, 't>,
         _options: &ParserOptions<'_, 'i>,
-    ) -> Result<Self::Prelude, ParseError<'i, Self::Error>> {
-        match_ignore_ascii_case! {&*name,
+    ) -> Result<Self::Prelude, cssparser::ParseError<'i, Self::Error>> {
+        cssparser::match_ignore_ascii_case! {&*name,
             "apply" => {
                 let mut names = Vec::new();
                 loop {
@@ -250,15 +139,16 @@ impl<'i> AtRuleParser<'i> for ApplyAtRuleParser {
                 }
                 Ok(names)
             },
-            _ => Err(input.new_error(BasicParseErrorKind::AtRuleInvalid(name)))
+            _ => Err(input.new_error(cssparser::BasicParseErrorKind::AtRuleInvalid(name)))
         }
     }
 
     fn rule_without_block(
         &mut self,
         prelude: Self::Prelude,
-        start: &ParserState,
+        start: &cssparser::ParserState,
         _options: &ParserOptions<'_, 'i>,
+        _is_nested: bool,
     ) -> Result<Self::AtRule, ()> {
         let loc = start.source_location();
         Ok(ApplyRule { names: prelude, loc })
