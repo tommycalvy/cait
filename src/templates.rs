@@ -9,7 +9,7 @@ pub fn head(page_title: &str, theme: &str) -> Markup {
                 meta charset="utf-8";
                 title { (page_title) }
                 link rel="stylesheet" type="text/css" href="/assets/utils.css";
-                script src="/assets/htmx.min.js" defer;
+                script src="/assets/htmx.min.js" defer {};
             }
         }
     }

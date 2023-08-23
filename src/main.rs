@@ -7,7 +7,7 @@ use axum::{
     Router,
 };
 use maud::Markup;
-use maud::DOCTYPE;
+use maud::html;
 use sailfish::TemplateOnce;
 use tower_http::services::ServeDir;
 use serde::{Deserialize, Serialize};
@@ -19,9 +19,8 @@ use axum_extra::extract::{CookieJar, cookie::Cookie};
 
 mod templates;
 mod pages;
-use pages;
 
-
+/*
 #[derive(TemplateOnce)]  // automatically implement `TemplateOnce` trait
 #[template(path = "app.stpl")]  // specify the path to template
 struct NavbarTemplate {
@@ -39,6 +38,7 @@ struct ChatsTemplate<'a> {
     color_scheme: ColorScheme,
 }
 
+
 #[derive(TemplateOnce)]  
 #[template(path = "settings/settings.stpl")]  
 struct SettingsTemplate<'a> {
@@ -53,6 +53,7 @@ struct ConversationTemplate<'a> {
     id: &'a str,
     color_scheme: ColorScheme,
 }
+*/
 
 
 #[tokio::main]
@@ -68,12 +69,12 @@ async fn main() {
     let shared_fm_list = Arc::new(fm_list);
     
     let app = Router::new()
-        .route("/", get(home))
-        .route("/chats", get(chats))
-        .route("/chats/:id", get(conversation))
+        //.route("/", get(home))
+        //.route("/chats", get(chats))
+        //.route("/chats/:id", get(conversation))
         .layer(axum::Extension(shared_fm_list))
         .route("/settings", get(settings))
-        .route("/:pathname", get(navbar))
+        //.route("/:pathname", get(navbar))
         .layer(middleware::from_fn(theme))
         .nest_service("/assets", ServeDir::new(&assets_path));
 
@@ -85,6 +86,7 @@ async fn main() {
         .unwrap();
 }
 
+/*
 async fn home(axum::Extension(color_scheme): axum::Extension<ColorScheme>) -> Html<String> {
     let ctx = NavbarTemplate {
         messages: vec![String::from("foo"), String::from("bar")],
@@ -130,6 +132,7 @@ async fn conversation(
     };
     Html(ctx.render_once().unwrap())
 }
+*/
 
 async fn settings(axum::Extension(color_scheme): axum::Extension<ColorScheme>) -> Markup {
     html! {
