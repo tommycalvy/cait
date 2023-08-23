@@ -1,18 +1,12 @@
-.global-css {
-    font-family: system-ui, sans-serif;
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    box-sizing: border-box;
-}
-
-.component-sizes {
-    --slide-toggle-width: 4rem;
+.config-vars {
+    --bg-opacity: 1;
 }
 
 .colors-light {
     --color-primary: oklch(66.18% 0.117 32.82);
     --color-primary-icon: oklch(59.7% 0.12 32.82);
     --color-surface: oklch(100% 0 0);
+    --color-bg-base: oklch(100% 0 0 / var(--bg-opacity));
     --color-navbar-bg: oklch(100% 0 0 / 65%);
     --color-navbar-inset: oklch(80% 0 0 / 60%);
     --color-topnav-bg: oklch(100% 0 0 / 60%);
@@ -34,6 +28,7 @@
     --color-primary: oklch(66.18% 0.117 32.82);
     --color-primary-icon: oklch(68.6% 0.144 55.06);
     --color-surface: oklch(0% 0 0);
+    --color-bg-base: oklch(0% 0 0 / var(--bg-opacity));
     --color-navbar-bg: oklch(0% 0 0 / 50%);
     --color-navbar-inset: oklch(45% 0 0 / 90%);
     --color-topnav-bg: oklch(0% 0 0 / 40%);
@@ -51,18 +46,29 @@
     --color-logo-icon-alt: oklch(57.65% 0.14 32.82);
 }
 
+.component-sizes {
+    --slide-toggle-width: 4rem;
+}
+
+.global-css {
+    font-family: system-ui, sans-serif;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    box-sizing: border-box;
+}
+
 :root {
-    @apply colors-light component-sizes global-css;
+    @apply colors-light component-sizes global-css config-vars;
 }
 
 @media (prefers-color-scheme: dark) {
    :root:not(:global(.light)) {
-    @apply colors-dark component-sizes global-css;
+    @apply colors-dark component-sizes global-css config-vars;
    }
 }
 
 :root:global(.dark) {
-    @apply colors-dark component-sizes global-css;
+    @apply colors-dark component-sizes global-css config-vars;
 }
 
 *, *:before, *:after {

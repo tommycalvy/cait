@@ -1,0 +1,93 @@
+:root {
+    --light: 1;
+    --bg-opacity: 1;
+    background-color: white;
+    color: black;
+    font-family: system-ui, sans-serif;
+    box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+   :root:not(:global(.light)) {
+        --light: 0;
+        --bg-opacity: 1;
+        background-color: dark;
+        color: white;
+        font-family: system-ui, sans-serif;
+        box-sizing: border-box;
+   }
+}
+
+:root:global(.dark) {
+    --light: 1;
+    --bg-opacity: 1;
+    background-color: dark;
+    color: white;
+    font-family: system-ui, sans-serif;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.fixed {
+    position: fixed;
+}
+  
+.top-0 {
+    top: 0px;
+}
+
+.bottom-0 {
+    bottom: 0px;
+}
+
+.left-0 {
+    left: 0px;
+}
+
+.right-0 {
+    right: 0px;
+}
+
+.min-h-4 {
+    min-height: 4rem;
+}
+
+.bg-white {
+    background-color: oklch(100% 0 0 / var(--bg-opacity));
+}
+
+html.dark .bg-black {
+    background-color: oklch(0% 0 0 / var(--bg-opacity));
+}
+
+html.dark .bg-opacity-50 {
+    --bg-opacity: 50;
+}
+
+.bg-opacity-65 {
+    --bg-opacity: 65;
+}
+
+.blur-02 {
+    backdrop-filter: blur(0.2rem);
+}
+

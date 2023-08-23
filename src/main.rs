@@ -6,6 +6,8 @@ use axum::{
     routing::get,
     Router,
 };
+use maud::Markup;
+use maud::DOCTYPE;
 use sailfish::TemplateOnce;
 use tower_http::services::ServeDir;
 use serde::{Deserialize, Serialize};
@@ -14,8 +16,10 @@ use std::env;
 use std::fs;
 use std::sync::Arc;
 use axum_extra::extract::{CookieJar, cookie::Cookie};
-use llm_chain::output::StreamExt;
-use llm_chain::{executor, parameters, prompt};
+
+mod templates;
+mod pages;
+use pages;
 
 
 #[derive(TemplateOnce)]  // automatically implement `TemplateOnce` trait
@@ -127,12 +131,10 @@ async fn conversation(
     Html(ctx.render_once().unwrap())
 }
 
-async fn settings(axum::Extension(color_scheme): axum::Extension<ColorScheme>) -> Html<String> {
-    let ctx = SettingsTemplate {
-        pathname: "settings",
-        color_scheme,
-    };
-    Html(ctx.render_once().unwrap())
+async fn settings(axum::Extension(color_scheme): axum::Extension<ColorScheme>) -> Markup {
+    html! {
+        (pages::settings(&color_scheme.class))
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

@@ -57,7 +57,7 @@ fn main() {
         samsung: Some(4 << 16),
     });
 
-
+    /*
     let ui_dirs = vec!["pages", "templates", "components"];
     let mut css_combined_string = String::new();
     for dir in ui_dirs {
@@ -70,13 +70,16 @@ fn main() {
             }
         }
     }
-    
+    */
+    let css_string = fs::read_to_string("assets/utils.css")
+        .expect("Should have been able to read string from css file");
 
-    let styles_file_name = "styles.css";
+
+    let styles_file_name = "utils.css";
     let styles_file_path = format!("{assets_path}/{styles_file_name}");
 
     let mut stylesheet = StyleSheet::parse(
-        &css_combined_string, 
+        &css_string, 
         ParserOptions {
             filename: styles_file_name.to_string(),
             flags: ParserFlags::NESTING,
