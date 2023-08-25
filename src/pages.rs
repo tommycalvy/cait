@@ -30,23 +30,58 @@ pub fn settings(color_scheme: ColorScheme) -> Markup {
                             class="m-0 left-0 bottom-0 w-4 h-2 rounded-2 duration-18 cursor-pointer 
                                    appearance-none disabled:cursor-not-allowed bg-gold
                                    checked:bg-blue-night disabled:bg-opacity-50 checked:disabled:bg-opacity-22
-                                   dark:disabled:bg-opacity-35 dark:checked:disabled:bg-opacity-50 sibling";
+                                   dark:disabled:bg-opacity-35 dark:checked:disabled:bg-opacity-50 partner";
 
                         span class="absolute content-empty cursor-pointer w-1.6 h-1.6 right-1/2+0.1 rounded-full
-                                    bg-gold-dark duration-30 sibling:disabled:bg-opacity-50 
-                                    sibling:disabled:cursor-not-allowed sibling:checked:bg-blue-twilight
-                                    transform sibling:checked:translate-x-2 sibling:checked:disabled:bg-opacity-30
-                                    dark:sibling:disabled:bg-opacity-30 dark:sibling:checked:disabled:bg-opacity:35"
+                                    bg-gold-dark duration-30 partner:disabled:bg-opacity-50 
+                                    partner:disabled:cursor-not-allowed partner:checked:bg-blue-twilight
+                                    transform partner:checked:translate-x-2 partner:checked:disabled:bg-opacity-30
+                                    dark:partner:disabled:bg-opacity-30 dark:partner:checked:disabled:bg-opacity:35
+                                    parent"
                         {
-                            span {}
-                            span {}
-                            span {}
-                            span {}
-                            span {}
-                            span {}
-                            span {}
-                            span {}
-                            span {}
+                            span class="absolute rounded-full top-1/2-0.4 left-1/2-0.4 w-0.8 h-0.8 bg-white transition
+                                        duration-30 transform scale-50 partner:checked:parent:scale-100  
+                                        partner:disabled:parent:bg-opacity-30" {}
+
+                            span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
+                                        duration-30 origin-center-top transform-rotate-first translate-y-0.4 
+                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-45" {}
+
+                            span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
+                                        duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-45
+                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-90" {}
+
+                            span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
+                                        duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-90
+                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-135" {}
+
+                            span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
+                                        duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-135
+                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-180" {}
+
+                            span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
+                                        duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-180
+                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-225" {}
+
+                            span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
+                                        duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-225
+                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-270" {}
+
+                            span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
+                                        duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-270
+                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-315" {}
+
+                            span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
+                                        duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-315
+                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-360" {}
                         }
                         span #light-span .select-none."opacity-50"[is_system] { "Dark" }
                     }
