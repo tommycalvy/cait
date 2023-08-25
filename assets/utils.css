@@ -1,6 +1,6 @@
 :root {
-    --light: 1;
     --bg-opacity: 1;
+    --text-opacity: 1;
     background-color: hsl(0 0% 100% / var(--bg-opacity));
     color: hsl(0 0% 0% / var(--bg-opacity));
     font-family: system-ui, sans-serif;
@@ -16,7 +16,6 @@
 }
 
 html.dark {
-    --light: 1;
     background-color: hsl(0 0% 0% / var(--bg-opacity));
     color: hsl(0 0% 100% / var(--bg-opacity));
 }
@@ -39,6 +38,10 @@ body {
 
 .justify-between {
     justify-content: space-between;
+}
+
+.justify-around {
+    justify-content: space-around;
 }
 
 .items-center {
@@ -130,6 +133,10 @@ body {
     margin-bottom: 4rem;
 }
 
+.p-1 {
+    padding: 1rem;
+}
+
 .px-2 {
     padding-left: 2rem;
     padding-right: 2rem;
@@ -149,6 +156,10 @@ body {
 
 .w-4 {
     width: 4rem;
+}
+
+.w-5 {
+    width: 5rem;
 }
 
 .h-0\.2 {
@@ -219,6 +230,20 @@ html.dark .dark\:bg-black {
 
 .checked\:bg-blue-night:checked {
     background-color: hsl(201.82 90% 17% / var(--bg-opacity));
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not(.light) .dark\:text-color-white {
+        color: hsl(0 0% 100% / var(--text-opacity));
+    }
+}
+
+html.dark .dark\:text-color-white {
+    color: hsl(0 0% 100% / var(--text-opacity));
+}
+
+.text-color-black {
+    color: hsl(0 0% 0% / var(--text-opacity));
 }
 
 .partner:checked + .parent .partner\:checked\:parent\:opacity-0 {
@@ -327,6 +352,10 @@ html.dark .dark\:checked\:disabled\:bg-opacity-50:checked:disabled,
 
 .blur-0\.2 {
     backdrop-filter: blur(0.2rem);
+}
+
+.blur-0\.5 {
+    backdrop-filter: blur(0.5rem);
 }
 
 .transform {

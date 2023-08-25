@@ -11,9 +11,10 @@ use std::env;
 use std::fs;
 use std::sync::Arc;
 
-
-mod templates;
-mod pages;
+mod icon;
+mod component;
+mod template;
+mod page;
 mod color_scheme;
 use color_scheme::{theme, ColorScheme};
 
@@ -67,8 +68,8 @@ async fn main() {
     
     let app = Router::new()
         //.route("/", get(home))
-        //.route("/chats", get(chats))
-        //.route("/chats/:id", get(conversation))
+        //.route("/conversations", get(chats))
+        //.route("/conversations/:id", get(conversation))
         .layer(axum::Extension(shared_fm_list))
         .route("/settings", get(settings))
         //.route("/:pathname", get(navbar))
@@ -133,7 +134,7 @@ async fn conversation(
 
 async fn settings(axum::Extension(color_scheme): axum::Extension<ColorScheme>) -> Markup {
     html! {
-        (pages::settings(color_scheme))
+        (page::settings(color_scheme))
     }
 }
 
