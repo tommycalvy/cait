@@ -230,53 +230,99 @@ html.dark .dark\:bg-black {
 }
 
 .checked\:disabled\:bg-opacity-22:checked:disabled {
-    --bg-opacity: 22;
+    --bg-opacity: 0.22;
 }
 
-@media (prefers-color-scheme:dark) {
+@media (prefers-color-scheme: dark) {
     html:not(.light) .partner:disabled + .dark\:partner\:disabled\:bg-opacity-30 {
-        --bg-opacity: 30;
+        --bg-opacity: 0.3;
     }
 }
 
 .partner:checked:disabled + .partner\:checked\:disabled\:bg-opacity-30,
-html.dark .partner:disabled + .dark\:partner\:disabled\:bg-opacity-30,
-.partner:disabled + .parent .partner\:disabled\:parent\:bg-opacity-30 {
-    --bg-opacity: 30;
+html:not(.light) .partner:disabled + .dark\:partner\:disabled\:bg-opacity-30 {
+    --bg-opacity: 0.3;
 }
 
 @media (prefers-color-scheme: dark) {
     html:not(.light) .dark\:disabled\:bg-opacity-35:disabled,
     html:not(.light) .partner:checked:disabled + .dark\:partner\:checked\:disabled\:bg-opacity-35 {
-        --bg-opacity: 35;
+        --bg-opacity: 0.35;
     }
 }
 
 html.dark .dark\:disabled\:bg-opacity-35:disabled,
 html.dark .partner:checked:disabled + .dark\:partner\:checked\:disabled\:bg-opacity-35 {
-    --bg-opacity: 35;
+    --bg-opacity: 0.35;
 }
 
 @media (prefers-color-scheme: dark) {
     html:not(.light) .dark\:bg-opacity-50, 
     html:not(.light) .dark\:checked\:disabled\:bg-opacity-50:checked:disabled {
-        --bg-opacity: 50;
+        --bg-opacity: 0.5;
     }
 }
 
+.disabled\:bg-opacity-50:disabled,
 html.dark .dark\:bg-opacity-50, 
 html.dark .dark\:checked\:disabled\:bg-opacity-50:checked:disabled,
-.disabled\:bg-opacity-50:disabled,
-.partner:disabled + .partner\:disabled\:bg-opacity-50 {
-    --bg-opacity: 50;
+.partner:disabled + .partner\:disabled\:bg-opacity-50,
+.partner:disabled + .parent .partner\:disabled\:parent\:bg-opacity-50 {
+    --bg-opacity: 0.5;
 }
 
 .bg-opacity-65 {
-    --bg-opacity: 65;
+    --bg-opacity: 0.65;
 }
 
-.theme-box-shadow {
-    box-shadow: 0.4rem -0.4rem 0 0.5rem #ffffff inset;
+.shadow-inner {
+    --offset-x: 0;
+    --offset-y: 0.13rem;
+    --blur-radius: 0.26rem;
+    --spread-radius: 0;
+    --shadow-opacity: 0.06;
+    --shadow-color: hsl(0 0% 0% / var(--shadow-opacity));
+    box-shadow: inset var(--offset-x) var(--offset-y) var(--blur-radius) var(--spread-radius) var(--shadow-color);
+}
+
+.offset-x-0\.4 {
+    --offset-x: 0.4rem;
+}
+
+.partner:checked + .parent .partner\:checked\:parent\:offset-x-0\.2 {
+    --offset-x: 0.2rem;
+}
+
+.offset-y-0\.4 {
+    --offset-y: -0.4rem;
+}
+
+.partner:checked + .parent .partner\:checked\:parent\:-offset-y-0\.2 {
+    --offset-y: -0.2rem;
+}
+
+.blur-radius-0 {
+    --blur-radius: 0;
+}
+
+.spread-radius-0\.5 {
+    --spread-radius: 0.5rem;
+}
+
+.partner:checked + .parent .partner\:checked\:parent\:spread-radius-0\.2 {
+    --spread-radius: 0.2rem;
+}
+
+.shadow-opacity-100 {
+    --shadow-opacity: 1;
+}
+
+.partner:disabled + .parent .partner\:disabled\:parent\:shadow-opacity-50 {
+    --shadow-opacity: 0.5;
+}
+
+.shadow-color-white {
+    --shadow-color: hsl(0 0% 100% / var(--shadow-opacity));
 }
 
 .blur-0\.2 {
@@ -356,16 +402,12 @@ html.dark .dark\:checked\:disabled\:bg-opacity-50:checked:disabled,
     --rotate: 315deg;
 }
 
-.partner:checked + .parent .partner\:checked\:parent\:rotate-360 {
-    --rotate: 360;
-}
-
 .scale-50 {
     --scale-x: 0.5;
     --scale-y: 0.5;
 }
 
-.partner:checked .parent .partner\:checked\:parent\:scale-100 {
+.partner:checked + .parent .partner\:checked\:parent\:scale-100 {
     --scale-x: 1;
     --scale-y: 1;
 }

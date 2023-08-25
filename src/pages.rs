@@ -39,49 +39,53 @@ pub fn settings(color_scheme: ColorScheme) -> Markup {
                                     dark:partner:disabled:bg-opacity-30 dark:partner:checked:disabled:bg-opacity:35
                                     parent"
                         {
-                            span class="absolute rounded-full top-1/2-0.4 left-1/2-0.4 w-0.8 h-0.8 bg-white transition
+                            span class="absolute rounded-full top-1/2-0.4 left-1/2-0.4 w-0.8 h-0.8 transition
                                         duration-30 transform scale-50 partner:checked:parent:scale-100  
-                                        partner:disabled:parent:bg-opacity-30" {}
+                                        shadow-inner offset-x-0.4 -offset-y-0.4 blur-radius-0 spread-radius-0.5
+                                        shadow-color-white shadow-opacity-100 
+                                        partner:disabled:parent:shadow-opacity-50
+                                        partner:checked:parent:offset-x-0.2 partner:checked:parent:-offset-y-0.2
+                                        partner:checked:parent:spread-radius-0.2" {}
 
                             span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
                                         duration-30 origin-center-top transform-rotate-first translate-y-0.4 
-                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
                                         partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-45" {}
 
                             span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
                                         duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-45
-                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
                                         partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-90" {}
 
                             span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
                                         duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-90
-                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
                                         partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-135" {}
 
                             span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
                                         duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-135
-                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
                                         partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-180" {}
 
                             span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
                                         duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-180
-                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
                                         partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-225" {}
 
                             span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
                                         duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-225
-                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
                                         partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-270" {}
 
                             span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
                                         duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-270
-                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
+                                        partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
                                         partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-315" {}
 
                             span class="absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
                                         duration-30 origin-center-top transform-rotate-first translate-y-0.4 rotate-315
-                                        partner:disabled:parent:bg-opacity-30 partner:checked:parent:opacity-0
-                                        partner:checked:parent:translate-y-0.8 partner:checked:parent:rotate-360" {}
+                                        partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
+                                        partner:checked:parent:translate-y-0.8" {}
                         }
                         span #light-span .select-none."opacity-50"[is_system] { "Dark" }
                     }
