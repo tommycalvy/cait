@@ -58,7 +58,7 @@ async fn main() {
     let assets_path = format!("{out_path}/assets");
 
     // Will eventually remove and store actual message in postgres
-    let fake_messages = fs::read_to_string("./src/fake-messages.json")
+    let fake_messages = fs::read_to_string("./fake-messages.json")
         .expect("Should be able to read fake-messages.json to string");
     let fm_list: Vec<page::FakeMessage> = serde_json::from_str(&fake_messages)
         .expect("Should be able to parse fake-message json from string");
@@ -66,7 +66,7 @@ async fn main() {
     
     let app = Router::new()
         //.route("/", get(home))
-        //.route("/conversations", get(chats))
+        .route("/conversations", get(conversations))
         //.route("/conversations/:id", get(conversation))
         .layer(axum::Extension(shared_fm_list))
         .route("/settings", get(settings))
@@ -103,19 +103,18 @@ async fn navbar(
     };
     Html(ctx.render_once().unwrap())
 }
+*/
 
-async fn chats(
-    axum::Extension(fm_list): axum::Extension<Arc<Vec<FakeMessage>>>,
-    axum::Extension(color_scheme): axum::Extension<ColorScheme>,
-) -> Html<String> {
-    let ctx = ChatsTemplate {
-        messages: fm_list.as_ref(),
-        pathname: "chats",
-        color_scheme,
-    };
-    Html(ctx.render_once().unwrap())
+async fn conversations(
+    axum::Extension(fm_list): axum::Extension<Arc<Vec<page::FakeMessage>>>,
+    axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>,
+) -> Markup {
+    html! {
+        (page::conversations(color_scheme.class(), fm_list.as_ref()))
+    }
 }
 
+/*
 async fn conversation(
     extract::Path(id): extract::Path<String>, 
     axum::Extension(fm_list): axum::Extension<Arc<Vec<FakeMessage>>>,

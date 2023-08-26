@@ -10,8 +10,8 @@ pub enum Pathname { Home, Admin, Conversations, Settings }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct FakeMessage {
-    from: String,
-    content: String,
+    pub from: String,
+    pub content: String,
 }
 
 pub fn settings(color_scheme: theme::ColorScheme) -> Markup {
@@ -34,6 +34,10 @@ pub fn settings(color_scheme: theme::ColorScheme) -> Markup {
 
 pub fn conversations(color_scheme_class: &str, messages: &Vec<FakeMessage>) -> Markup {
     html! {
-        
+        (template::head("Cait - Conversations", color_scheme_class))
+        body {
+            (template::messages(messages))
+            (template::bottom_navbar(Pathname::Conversations))
+        }
     }
 }

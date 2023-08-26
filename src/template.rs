@@ -55,34 +55,19 @@ pub fn messages(messages: &Vec<FakeMessage>) -> Markup {
     html! {
         main class="flex flex-col items-center w-full" {
             @for msg in messages {
-                div class="flex justify-center w-full pt-2 pr-2 pb-3 pl-1" {
+                @let is_user = msg.from == "user";
+                @let is_chatbot = msg.from == "chatbot";
+                div .flex.justify-center.w-full."pt-2"."pr-2"."pb-3"."pl-1"
+                    ."bg-gray-100"[is_chatbot]."dark:bg-gray-100"[is_chatbot] {
                     div class="flex w-50" {
                         div class="w-5" {
-                            div class="w-3 h-3 rounded-full mx-1" {}
+                            div ."w-3"."h-3".rounded-full."mx-1".bg-dark-cyan[is_user].bg-dark-magenta[is_chatbot] {}
+                        }
+                        p {
+                            (msg.content)
                         }
                     }
                 }
-                /*
-                @if msg.from == "user" {
-                    <div class="message user-message">
-                        <div class="content-wrapper">
-                            <div class="circle-wrapper">
-                                <div class="circle user-avatar"></div>
-                            </div>
-                            <p><%= msg.content %></p>
-                        </div>
-                    </div>
-                } @else if msg.from == "chatbot" { 
-                    <div class="message chatbot-message">
-                        <div class="content-wrapper">
-                            <div class="circle-wrapper">
-                                <div class="circle chatbot-avatar"></div>
-                            </div>
-                            <p><%= msg.content %></p>
-                        </div>
-                    </div>
-                }
-                */
             }
         }
     }

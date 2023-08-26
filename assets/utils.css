@@ -265,7 +265,13 @@ html.dark .dark\:bg-black {
     background-color: hsl(0 0% 95% / var(--bg-opacity));
 }
 
-.bg-gray-800 {
+@media (prefers-color-scheme: dark) {
+    html:not(.light) .dark\:bg-gray-800 {
+        background-color: hsl(0 0% 10% / var(--bg-opacity));
+    }
+}
+
+html.dark .dark\:bg-gray-800 {
     background-color: hsl(0 0% 10% / var(--bg-opacity));
 }
 
@@ -275,6 +281,14 @@ html.dark .dark\:bg-black {
 
 .bg-gold-dark {
     background-color: hsl(40.41 100% 42% / var(--bg-opacity));
+}
+
+.bg-dark-cyan {
+    background-color: darkcyan;
+}
+
+.bg-dark-magenta {
+    background-color: darkmagenta;
 }
 
 .partner:checked + .partner\:checked\:bg-blue-twilight {
