@@ -1,13 +1,20 @@
 use maud::{html, Markup};
+use serde::{Deserialize, Serialize};
+
 use crate::template;
 use crate::component;
-use crate::color_scheme::ColorScheme;
+use crate::theme;
 
 #[derive(PartialEq)]
 pub enum Pathname { Home, Admin, Conversations, Settings }
 
-pub fn settings(color_scheme: ColorScheme) -> Markup {
-    
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct FakeMessage {
+    from: String,
+    content: String,
+}
+
+pub fn settings(color_scheme: theme::ColorScheme) -> Markup {
     html! {
         (template::head("Cait - Settings", color_scheme.class()))
         body {
@@ -22,5 +29,11 @@ pub fn settings(color_scheme: ColorScheme) -> Markup {
             }
             (template::bottom_navbar(Pathname::Settings))
         }
+    }
+}
+
+pub fn conversations(color_scheme_class: &str, messages: &Vec<FakeMessage>) -> Markup {
+    html! {
+        
     }
 }

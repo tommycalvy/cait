@@ -5,7 +5,6 @@ use axum::{
 };
 use maud::{html, Markup};
 use tower_http::services::ServeDir;
-use serde::{Deserialize, Serialize};
 use serde_json;
 use std::env;
 use std::fs;
@@ -15,8 +14,7 @@ mod icon;
 mod component;
 mod template;
 mod page;
-mod color_scheme;
-use color_scheme::{theme, ColorScheme};
+mod theme;
 
 /*
 #[derive(TemplateOnce)]  // automatically implement `TemplateOnce` trait
@@ -62,7 +60,7 @@ async fn main() {
     // Will eventually remove and store actual message in postgres
     let fake_messages = fs::read_to_string("./src/fake-messages.json")
         .expect("Should be able to read fake-messages.json to string");
-    let fm_list: Vec<FakeMessage> = serde_json::from_str(&fake_messages)
+    let fm_list: Vec<page::FakeMessage> = serde_json::from_str(&fake_messages)
         .expect("Should be able to parse fake-message json from string");
     let shared_fm_list = Arc::new(fm_list);
     
@@ -73,7 +71,7 @@ async fn main() {
         .layer(axum::Extension(shared_fm_list))
         .route("/settings", get(settings))
         //.route("/:pathname", get(navbar))
-        .layer(middleware::from_fn(theme))
+        .layer(middleware::from_fn(theme::extract_theme))
         .nest_service("/assets", ServeDir::new(&assets_path));
 
     println!("\n\tServing on localhost:3000\n");
@@ -132,15 +130,11 @@ async fn conversation(
 }
 */
 
-async fn settings(axum::Extension(color_scheme): axum::Extension<ColorScheme>) -> Markup {
+async fn settings(axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>) -> Markup {
     html! {
         (page::settings(color_scheme))
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct FakeMessage {
-    from: String,
-    content: String,
-}
+
 

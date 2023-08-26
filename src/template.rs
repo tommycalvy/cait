@@ -1,5 +1,5 @@
 use maud::{DOCTYPE, html, Markup};
-use crate::{icon, page};
+use crate::{icon, page::{self, FakeMessage}};
 
 /// A basic header with a dynamic `page_title`.
 pub fn head(page_title: &str, theme: &str) -> Markup {
@@ -46,6 +46,43 @@ pub fn bottom_navbar(pathname: page::Pathname) -> Markup {
                 } @else {
                     (icon::settings_outlined())
                 }
+            }
+        }
+    }
+}
+
+pub fn messages(messages: &Vec<FakeMessage>) -> Markup {
+    html! {
+        main class="flex flex-col items-center w-full" {
+            @for msg in messages {
+                div class="flex justify-center w-full pt-2 pr-2 pb-3 pl-1" {
+                    div class="flex w-50" {
+                        div class="w-5" {
+                            div class="w-3 h-3 rounded-full mx-1" {}
+                        }
+                    }
+                }
+                /*
+                @if msg.from == "user" {
+                    <div class="message user-message">
+                        <div class="content-wrapper">
+                            <div class="circle-wrapper">
+                                <div class="circle user-avatar"></div>
+                            </div>
+                            <p><%= msg.content %></p>
+                        </div>
+                    </div>
+                } @else if msg.from == "chatbot" { 
+                    <div class="message chatbot-message">
+                        <div class="content-wrapper">
+                            <div class="circle-wrapper">
+                                <div class="circle chatbot-avatar"></div>
+                            </div>
+                            <p><%= msg.content %></p>
+                        </div>
+                    </div>
+                }
+                */
             }
         }
     }

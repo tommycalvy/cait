@@ -1,5 +1,5 @@
 use maud::{html, Markup};
-use crate::color_scheme::{ColorScheme, ColorMode, Theme};
+use crate::theme::{ColorScheme, ColorMode, Theme};
 
 pub fn theme_preference(color_scheme: ColorScheme) -> Markup {
     let color_mode = color_scheme.color_mode();

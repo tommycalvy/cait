@@ -92,7 +92,7 @@ impl ColorScheme {
     }
 }
 
-pub async fn theme<B>(
+pub async fn extract_theme<B>(
     mut req: Request<B>,
     next: middleware::Next<B>,
 ) -> impl IntoResponse {
