@@ -1,12 +1,12 @@
 use maud::{html, Markup};
-use crate::theme::{ColorScheme, ColorMode, Theme};
+use crate::{theme, icon};
 
-pub fn theme_preference(color_scheme: ColorScheme) -> Markup {
+pub fn theme_preference(color_scheme: theme::ColorScheme) -> Markup {
     let color_mode = color_scheme.color_mode();
-    let is_system = color_mode == ColorMode::System;
-    let is_select = color_mode == ColorMode::Select;
+    let is_system = color_mode == theme::ColorMode::System;
+    let is_select = color_mode == theme::ColorMode::Select;
     let selected_color = color_scheme.selected_color();
-    let is_dark = selected_color == Theme::Dark;
+    let is_dark = selected_color == theme::Theme::Dark;
 
     html! {
         div class="flex gap-3" {
@@ -49,6 +49,22 @@ pub fn theme_preference(color_scheme: ColorScheme) -> Markup {
                     }
                 }
                 span #light-span .select-none."opacity-50"[is_system] { "Dark" }
+            }
+        }
+    }
+}
+
+pub fn search_bar() -> Markup {
+    html! {
+        form id="search-form" action="?/searchChats" method="post" 
+            class="flex justify-center w-full mt-0.5 mb-1 px-2 " {
+            label for="search" class="flex flex-grow gap-0.5 bg-gray-200 dark:bg-gray-700 rounded-1 
+                max-w-25 max-h-2.2 px-1 text-gray-500 dark:text-gray-400 focus-within:outline-terracotta-400
+                focus-within:bg-gray-100 dark:focus-within:bg-gray-700" {
+                div class="p-0.4 w-2.2" {
+                    (icon::magnifying_glass())
+                }
+		        input id="search" enterkeyhint="search" placeholder="Search" class="w-full";
             }
         }
     }

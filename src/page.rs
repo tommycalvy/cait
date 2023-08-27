@@ -36,6 +36,7 @@ pub fn conversations(color_scheme_class: &str, messages: &Vec<FakeMessage>) -> M
     html! {
         (template::head("Cait - Conversations", color_scheme_class))
         body {
+            (component::search_bar())
             (template::messages(messages))
             (template::bottom_navbar(Pathname::Conversations))
         }
