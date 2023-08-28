@@ -48,6 +48,7 @@ pub fn bottom_navbar(pathname: page::Pathname) -> Markup {
                 }
             }
         }
+        div class="w-full min-h-4" {}
     }
 }
 
@@ -69,6 +70,18 @@ pub fn messages(messages: &Vec<FakeMessage>) -> Markup {
                     }
                 }
             }
+        }
+    }
+}
+
+pub fn top_navbar(title: &str, left_button: Markup, right_button: Markup) -> Markup {
+    html! {
+        div class="w-full min-h-4.5" {}
+        nav class="flex justify-between items-center fixed top-0 left-0 right-0 px-2 min-h-4
+                bg-white dark:bg-black bg-opacity-65 dark:bg-opacity-50 blur-0.5" {
+            div class="w-5 flex" { (left_button) }
+            h3 { (title) }
+            div class="w-5 flex justify-end" { (right_button) }
         }
     }
 }

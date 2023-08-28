@@ -69,3 +69,19 @@ pub fn search_bar() -> Markup {
         }
     }
 }
+
+pub fn edit_button(link: &str) -> Markup {
+    html! {
+        a href=(link) {
+            p class="text-xl text-terracotta-400 h-2 m-0" { "edit" }
+        }
+    }
+}
+
+pub fn plus_button(link: &str) -> Markup {
+    html! {
+        a href=(link) class="text-terracotta-400 w-2 h-2" {
+            (icon::plus())
+        }
+    }
+}

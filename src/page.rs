@@ -18,11 +18,7 @@ pub fn settings(color_scheme: theme::ColorScheme) -> Markup {
     html! {
         (template::head("Cait - Settings", color_scheme.class()))
         body {
-            header class="flex justify-center items-center fixed top-0 left-0 right-0 min-h-4 
-                          bg-white bg-opacity-65 dark:bg-dark dark:bg-opacity-50 blur-0.2" 
-            {
-                h3 { "Settings" }
-            }
+            (template::top_navbar("Settings", html! { div {} }, html! { div {}}))
             main class="mt-6 mb-4 px-2" {
                 h3 { "Theme Preferences" }
                 (component::theme_preference(color_scheme))
@@ -36,6 +32,11 @@ pub fn conversations(color_scheme_class: &str, messages: &Vec<FakeMessage>) -> M
     html! {
         (template::head("Cait - Conversations", color_scheme_class))
         body {
+            (template::top_navbar(
+                "Conversations", 
+                component::edit_button("conversations/edit"), 
+                component::plus_button("conversations/tommy"),
+            ))
             (component::search_bar())
             (template::messages(messages))
             (template::bottom_navbar(Pathname::Conversations))
