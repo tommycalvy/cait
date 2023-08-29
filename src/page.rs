@@ -69,3 +69,12 @@ pub fn home(color_scheme_class: &str) -> Markup {
         }
     }
 }
+
+pub fn admin(color_scheme_class: &str) -> Markup {
+    html! {
+        (template::head("Cait - Admin", color_scheme_class))
+        body {
+            (template::bottom_navbar(Pathname::Admin))
+        }
+    }
+}

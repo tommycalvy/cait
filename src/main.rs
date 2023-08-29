@@ -51,6 +51,12 @@ async fn home(axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>
     }
 }
 
+async fn admin(axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>) -> Markup {
+    html! {
+        (page::admin(color_scheme.class()))
+    }
+}
+
 async fn conversations(
     axum::Extension(fm_list): axum::Extension<Arc<Vec<page::FakeMessage>>>,
     axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>,

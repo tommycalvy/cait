@@ -1,4 +1,3 @@
-//use core::panic;
 use std::{
     fs,
     path::Path,
@@ -12,22 +11,28 @@ use reqwest;
 
 fn main() {
     let out_path = env::var("OUT_DIR").unwrap();
-    dbg!(&out_path);
-
-    //println!("cargo:rerun-if-changed={templates_dir}");
 
     let assets_path = format!("{out_path}/assets");
     if !Path::new(&assets_path).is_dir() {
         fs::create_dir_all(&assets_path).expect("Should be able to create assets directory if not there");
     }
 
-    // Download htmx js library to the assets folder if it doesn't already exist there
+    // Download htmx
     let htmx_file_path = format!("{assets_path}/htmx.min.js");
     if !Path::new(&htmx_file_path).is_file() {
         let htmx_body = reqwest::blocking::get("https://unpkg.com/htmx.org@1.9.4/dist/htmx.min.js")
             .expect("Should be able to download htmx source code");
         let htmx_text = htmx_body.text().expect("Should be able to convert htmx body to text");
         fs::write(htmx_file_path, htmx_text).expect("Should be able to write htmx text to file");
+    }
+
+    // Download hyperscript
+    let hyperscript_file_path = format!("{assets_path}/hyperscript.min.js");
+    if !Path::new(&hyperscript_file_path).is_file() {
+        let hyperscript_body = reqwest::blocking::get("https://unpkg.com/hyperscript.org@0.9.11")
+            .expect("Should be able to download htmx source code");
+        let hyperscript_text = hyperscript_body.text().expect("Should be able to convert hyperscript body to text");
+        fs::write(hyperscript_file_path, hyperscript_text).expect("Should be able to write hyperscript text to file");
     }
 
 
@@ -66,12 +71,11 @@ fn main() {
     }).unwrap();
     
     let res = stylesheet.to_css(PrinterOptions {
-        //minify: true,
+        minify: true,
         targets,
         ..PrinterOptions::default()
     }).unwrap();
 
     fs::write(styles_file_path, res.code).expect("Should be able to write minified css string to file");
-    //panic!()
     
 }
