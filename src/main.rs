@@ -16,42 +16,6 @@ mod template;
 mod page;
 mod theme;
 
-/*
-#[derive(TemplateOnce)]  // automatically implement `TemplateOnce` trait
-#[template(path = "app.stpl")]  // specify the path to template
-struct NavbarTemplate {
-    // data to be passed to the template
-    messages: Vec<String>,
-    pathname: String,
-    color_scheme: ColorScheme,
-}
-
-#[derive(TemplateOnce)]  
-#[template(path = "chats/chats.stpl")]  
-struct ChatsTemplate<'a> {
-    messages: &'a Vec<FakeMessage>,
-    pathname: &'a str,
-    color_scheme: ColorScheme,
-}
-
-
-#[derive(TemplateOnce)]  
-#[template(path = "settings/settings.stpl")]  
-struct SettingsTemplate<'a> {
-    pathname: &'a str,
-    color_scheme: ColorScheme,
-}
-
-#[derive(TemplateOnce)]  
-#[template(path = "chats/conversation/conversation.stpl")]  
-struct ConversationTemplate<'a> {
-    messages: &'a Vec<FakeMessage>,
-    id: &'a str,
-    color_scheme: ColorScheme,
-}
-*/
-
-
 #[tokio::main]
 async fn main() {
     let out_path = env!("OUT_DIR");
@@ -65,12 +29,11 @@ async fn main() {
     let shared_fm_list = Arc::new(fm_list);
     
     let app = Router::new()
-        //.route("/", get(home))
+        .route("/", get(home))
         .route("/conversations", get(conversations))
-        //.route("/conversations/:id", get(conversation))
+        .route("/conversations/:id", get(conversation))
         .layer(axum::Extension(shared_fm_list))
         .route("/settings", get(settings))
-        //.route("/:pathname", get(navbar))
         .layer(middleware::from_fn(theme::extract_theme))
         .nest_service("/assets", ServeDir::new(&assets_path));
 
@@ -82,28 +45,11 @@ async fn main() {
         .unwrap();
 }
 
-/*
-async fn home(axum::Extension(color_scheme): axum::Extension<ColorScheme>) -> Html<String> {
-    let ctx = NavbarTemplate {
-        messages: vec![String::from("foo"), String::from("bar")],
-        pathname: String::from(""),
-        color_scheme,
-    };
-    Html(ctx.render_once().unwrap())
+async fn home(axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>) -> Markup {
+    html! {
+        (page::home(color_scheme.class()))
+    }
 }
-
-async fn navbar(
-    extract::Path(pathname): extract::Path<String>, 
-    axum::Extension(color_scheme): axum::Extension<ColorScheme>
-) -> Html<String> {
-    let ctx = NavbarTemplate {
-        messages: vec![String::from("foo"), String::from("bar")],
-        pathname,
-        color_scheme,
-    };
-    Html(ctx.render_once().unwrap())
-}
-*/
 
 async fn conversations(
     axum::Extension(fm_list): axum::Extension<Arc<Vec<page::FakeMessage>>>,
@@ -114,20 +60,17 @@ async fn conversations(
     }
 }
 
-/*
+
 async fn conversation(
-    extract::Path(id): extract::Path<String>, 
-    axum::Extension(fm_list): axum::Extension<Arc<Vec<FakeMessage>>>,
-    axum::Extension(color_scheme): axum::Extension<ColorScheme>,
-) -> Html<String> {
-    let ctx = ConversationTemplate {
-        messages: fm_list.as_ref(),
-        id: &id,
-        color_scheme,
-    };
-    Html(ctx.render_once().unwrap())
+    axum::extract::Path(id): axum::extract::Path<String>, 
+    axum::Extension(fm_list): axum::Extension<Arc<Vec<page::FakeMessage>>>,
+    axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>,
+) -> Markup {
+    html! {
+        (page::conversation(color_scheme.class(), &id, fm_list.as_ref()))
+    }
 }
-*/
+
 
 async fn settings(axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>) -> Markup {
     html! {

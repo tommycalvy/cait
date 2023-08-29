@@ -1,6 +1,0 @@
-template_dirs = ["${OUT_DIR}/templates"]
-escape = true
-delimiter = "%"
-
-[optimizations]
-rm_whitespace = false

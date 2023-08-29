@@ -3,7 +3,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::template;
 use crate::component;
+use crate::icon;
 use crate::theme;
+
 
 #[derive(PartialEq)]
 pub enum Pathname { Home, Admin, Conversations, Settings }
@@ -35,11 +37,35 @@ pub fn conversations(color_scheme_class: &str, messages: &Vec<FakeMessage>) -> M
             (template::top_navbar(
                 "Conversations", 
                 component::edit_button("conversations/edit"), 
-                component::plus_button("conversations/tommy"),
+                component::primary_svg_button("conversations/tommy", icon::plus()),
             ))
             (component::search_bar())
             (template::messages(messages))
             (template::bottom_navbar(Pathname::Conversations))
+        }
+    }
+}
+
+pub fn conversation(color_scheme_class: &str, title: &str, messages: &Vec<FakeMessage>) -> Markup {
+    html! {
+        (template::head("Cait - Conversation", color_scheme_class))
+        body {
+            (template::top_navbar(
+                title, 
+                component::primary_svg_button("/conversations", icon::arrow_left()), 
+                html! { div {} },
+            ))
+            (template::messages(messages))
+            (template::conversations_input())
+        }
+    }
+}
+
+pub fn home(color_scheme_class: &str) -> Markup {
+    html! {
+        (template::head("Cait - Home", color_scheme_class))
+        body {
+            (template::bottom_navbar(Pathname::Home))
         }
     }
 }

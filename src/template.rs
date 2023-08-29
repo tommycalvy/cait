@@ -1,5 +1,5 @@
 use maud::{DOCTYPE, html, Markup};
-use crate::{icon, page::{self, FakeMessage}};
+use crate::{icon, page, component};
 
 /// A basic header with a dynamic `page_title`.
 pub fn head(page_title: &str, theme: &str) -> Markup {
@@ -52,7 +52,7 @@ pub fn bottom_navbar(pathname: page::Pathname) -> Markup {
     }
 }
 
-pub fn messages(messages: &Vec<FakeMessage>) -> Markup {
+pub fn messages(messages: &Vec<page::FakeMessage>) -> Markup {
     html! {
         main class="flex flex-col items-center w-full" {
             @for msg in messages {
@@ -82,6 +82,14 @@ pub fn top_navbar(title: &str, left_button: Markup, right_button: Markup) -> Mar
             div class="w-5 flex" { (left_button) }
             h3 { (title) }
             div class="w-5 flex justify-end" { (right_button) }
+        }
+    }
+}
+
+pub fn conversations_input() -> Markup {
+    html! {
+        div class="fixed bottom-0 left-0 right-0 py-2 flex justify-center blur-0.5" {
+            (component::prompt_input())
         }
     }
 }

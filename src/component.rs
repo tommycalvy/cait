@@ -78,10 +78,25 @@ pub fn edit_button(link: &str) -> Markup {
     }
 }
 
-pub fn plus_button(link: &str) -> Markup {
+pub fn primary_svg_button(link: &str, svg: Markup) -> Markup {
     html! {
         a href=(link) class="text-terracotta-400 w-2 h-2" {
-            (icon::plus())
+            (svg)
+        }
+    }
+}
+
+pub fn prompt_input() -> Markup {
+    html! {
+        form #send-prompt action="?" method="post" 
+            class="flex justify-center w-full px-2" {
+            label for="prompt-input" class="flex flex-grow gap-0.5 bg-white dark:bg-black max-w-50
+                    focus-within:outline-terracotta-400" {
+                input id="prompt-input" enterkeyhint="send" placeholder="Send a message" class="w-full";
+                div class="p-0.4 w-2.2 text-terracotta-400" {
+                    (icon::paper_airplane())
+                }
+            }
         }
     }
 }
