@@ -30,6 +30,7 @@ async fn main() {
     
     let app = Router::new()
         .route("/", get(home))
+        .route("/admin", get(admin))
         .route("/conversations", get(conversations))
         .route("/conversations/:id", get(conversation))
         .layer(axum::Extension(shared_fm_list))
