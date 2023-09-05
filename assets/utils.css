@@ -1,31 +1,32 @@
 :root {
-    --bg-opacity: 1;
-    --text-opacity: 1;
     background-color: hsl(0 0% 100% / var(--bg-opacity));
-    color: hsl(0 0% 0% / var(--bg-opacity));
+    color: hsl(0 0% 0% / var(--text-opacity));
     font-family: system-ui, sans-serif;
     box-sizing: border-box;
+    --bg-opacity: 1;
+    --text-opacity: 1;
 }
 
 @media (prefers-color-scheme: dark) {
-   html:not(.light) {
-        --light: 0;
+    :root:not(.light) {
         background-color: hsl(0 0% 0% / var(--bg-opacity));
-        color: hsl(0 0% 100% / var(--bg-opacity));
+        color: hsl(0 0% 100% / var(--text-opacity));
    }
 }
 
-html.dark {
+:root.dark {
     background-color: hsl(0 0% 0% / var(--bg-opacity));
-    color: hsl(0 0% 100% / var(--bg-opacity));
+    color: hsl(0 0% 100% / var(--text-opacity));
 }
 
 *, *:before, *:after {
     box-sizing: inherit;
 }
 
-body {
+body, html {
     margin: 0;
+    padding: 0;
+    height: 100%; /* Ensure full height */
 }
 
 input {
@@ -41,6 +42,10 @@ a, a:link, a:visited, a:hover, a:active {
 
 .flex {
     display: flex;
+}
+
+.hidden {
+    display: none;
 }
 
 .flex-col {
@@ -91,15 +96,22 @@ a, a:link, a:visited, a:hover, a:active {
     position: absolute;
 }
 
-.select-none {
+.select-none,
+.partner:disabled + .partner\:disabled\:select-none {
     user-select: none;
+}
+
+.partner:checked + .partner\:checked\:cursor-default {
+    cursor: default;
 }
 
 .cursor-pointer {
     cursor: pointer;
 }
 
-.cursor-not-allowed {
+.cursor-not-allowed,
+.disabled\:cursor-not-allowed:disabled,
+.partner:disabled + .partner\:disabled\:cursor-not-allowed {
     cursor: not-allowed;
 }
 
@@ -107,13 +119,12 @@ a, a:link, a:visited, a:hover, a:active {
     content: "";
 }
 
-.disabled\:cursor-not-allowed:disabled,
-.partner:disabled + .partner\:disabled\:cursor-not-allowed {
-    cursor: not-allowed;
-}
-
 .appearance-none {
     appearance: none;
+}
+
+.text-center {
+    text-align: center;
 }
 
 .text-xl {
@@ -233,6 +244,10 @@ a, a:link, a:visited, a:hover, a:active {
     width: 0.8rem;
 }
 
+.w-1\.4 {
+    width: 1.4rem;
+}
+
 .w-1\.6 {
     width: 1.6rem;
 }
@@ -257,12 +272,24 @@ a, a:link, a:visited, a:hover, a:active {
     width: 5rem;
 }
 
+.w-8 {
+    width: 8rem;
+}
+
+.w-12 {
+    width: 12rem;
+}
+
 .w-50 {
     width: 50rem;
 }
 
 .w-full {
     width: 100%;
+}
+
+.w-screen {
+    width: 100vw;
 }
 
 .max-w-25 {
@@ -281,6 +308,10 @@ a, a:link, a:visited, a:hover, a:active {
     height: 0.8rem;
 }
 
+.h-1\.4 {
+    height: 1.4rem;
+}
+
 .h-1\.6 {
     height: 1.6rem;
 }
@@ -293,6 +324,14 @@ a, a:link, a:visited, a:hover, a:active {
     height: 3rem;
 }
 
+.h-5 {
+    height: 5rem;
+}
+
+.h-10 {
+    height: 10rem;
+}
+
 .min-h-4 {
     min-height: 4rem;
 }
@@ -303,6 +342,14 @@ a, a:link, a:visited, a:hover, a:active {
 
 .max-h-2\.2 {
     max-height: 2.2rem;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.h-screen {
+    height: 100vh;
 }
 
 .gap-0\.5 {
@@ -321,13 +368,17 @@ a, a:link, a:visited, a:hover, a:active {
     background-color: hsl(0 0% 100% / var(--bg-opacity));
 }
 
+.bg-black {
+    background-color: hsl(0 0% 0% / var(--bg-opacity));
+}
+
 @media (prefers-color-scheme: dark) {
-    html:not(.light) .dark\:bg-black {
+    :root:not(.light) .dark\:bg-black {
         background-color: hsl(0 0% 0% / var(--bg-opacity));
     }
 }
 
-html.dark .dark\:bg-black {
+:root.dark .dark\:bg-black {
     background-color: hsl(0 0% 0% / var(--bg-opacity));
 }
 
@@ -344,26 +395,26 @@ html.dark .dark\:bg-black {
 }
 
 @media (prefers-color-scheme: dark) {
-    html:not(.light) .dark\:bg-gray-700,
-    html:not(.light) .dark\:focus-within\:bg-gray-700:focus-within {
+    :root:not(.light) .dark\:bg-gray-700,
+    :root:not(.light) .dark\:focus-within\:bg-gray-700:focus-within {
         background-color: hsl(0 0% 28% / var(--bg-opacity));
     }
 }
 
-html.dark .dark\:bg-gray-700,
-html.dark .dark\:focus-within\:bg-gray-700:focus-within {
+:root.dark .dark\:bg-gray-700,
+:root.dark .dark\:focus-within\:bg-gray-700:focus-within {
     background-color: hsl(0 0% 28% / var(--bg-opacity));
 }
 
 
 
 @media (prefers-color-scheme: dark) {
-    html:not(.light) .dark\:bg-gray-800 {
+    :root:not(.light) .dark\:bg-gray-800 {
         background-color: hsl(0 0% 10% / var(--bg-opacity));
     }
 }
 
-html.dark .dark\:bg-gray-800 {
+:root.dark .dark\:bg-gray-800 {
     background-color: hsl(0 0% 10% / var(--bg-opacity));
 }
 
@@ -391,13 +442,17 @@ html.dark .dark\:bg-gray-800 {
     background-color: hsl(201.82 90% 17% / var(--bg-opacity));
 }
 
+.text-white {
+    color: hsl(0 0% 100% / var(--text-opacity));
+}
+
 @media (prefers-color-scheme: dark) {
-    html:not(.light) .dark\:text-white {
+    :root:not(.light) .dark\:text-white {
         color: hsl(0 0% 100% / var(--text-opacity));
     }
 }
 
-html.dark .dark\:text-white {
+:root.dark .dark\:text-white {
     color: hsl(0 0% 100% / var(--text-opacity));
 }
 
@@ -406,12 +461,12 @@ html.dark .dark\:text-white {
 }
 
 @media (prefers-color-scheme: dark) {
-    html:not(.light) .dark\:text-gray-400 {
+    :root:not(.light) .dark\:text-gray-400 {
         color: hsl(0 0% 62% / var(--text-opacity));
     }
 }
 
-html.dark .dark\:text-gray-400 {
+:root.dark .dark\:text-gray-400 {
     color: hsl(0 0% 62% / var(--text-opacity));
 }
 
@@ -431,43 +486,47 @@ html.dark .dark\:text-gray-400 {
     opacity: 0.5;
 }
 
+.partner:disabled + .partner\:disabled\:opacity-50 {
+    opacity: 0.5;
+}
+
 .checked\:disabled\:bg-opacity-22:checked:disabled {
     --bg-opacity: 0.22;
 }
 
 @media (prefers-color-scheme: dark) {
-    html:not(.light) .partner:disabled + .dark\:partner\:disabled\:bg-opacity-30 {
+    :root:not(.light) .partner:disabled + .dark\:partner\:disabled\:bg-opacity-30 {
         --bg-opacity: 0.3;
     }
 }
 
 .partner:checked:disabled + .partner\:checked\:disabled\:bg-opacity-30,
-html:not(.light) .partner:disabled + .dark\:partner\:disabled\:bg-opacity-30 {
+:root:not(.light) .partner:disabled + .dark\:partner\:disabled\:bg-opacity-30 {
     --bg-opacity: 0.3;
 }
 
 @media (prefers-color-scheme: dark) {
-    html:not(.light) .dark\:disabled\:bg-opacity-35:disabled,
-    html:not(.light) .partner:checked:disabled + .dark\:partner\:checked\:disabled\:bg-opacity-35 {
+    :root:not(.light) .dark\:disabled\:bg-opacity-35:disabled,
+    :root:not(.light) .partner:checked:disabled + .dark\:partner\:checked\:disabled\:bg-opacity-35 {
         --bg-opacity: 0.35;
     }
 }
 
-html.dark .dark\:disabled\:bg-opacity-35:disabled,
-html.dark .partner:checked:disabled + .dark\:partner\:checked\:disabled\:bg-opacity-35 {
+:root.dark .dark\:disabled\:bg-opacity-35:disabled,
+:root.dark .partner:checked:disabled + .dark\:partner\:checked\:disabled\:bg-opacity-35 {
     --bg-opacity: 0.35;
 }
 
 @media (prefers-color-scheme: dark) {
-    html:not(.light) .dark\:bg-opacity-50, 
-    html:not(.light) .dark\:checked\:disabled\:bg-opacity-50:checked:disabled {
+    :root:not(.light) .dark\:bg-opacity-50, 
+    :root:not(.light) .dark\:checked\:disabled\:bg-opacity-50:checked:disabled {
         --bg-opacity: 0.5;
     }
 }
 
 .disabled\:bg-opacity-50:disabled,
-html.dark .dark\:bg-opacity-50, 
-html.dark .dark\:checked\:disabled\:bg-opacity-50:checked:disabled,
+:root.dark .dark\:bg-opacity-50, 
+:root.dark .dark\:checked\:disabled\:bg-opacity-50:checked:disabled,
 .partner:disabled + .partner\:disabled\:bg-opacity-50,
 .partner:disabled + .parent .partner\:disabled\:parent\:bg-opacity-50 {
     --bg-opacity: 0.5;
@@ -481,8 +540,44 @@ html.dark .dark\:checked\:disabled\:bg-opacity-50:checked:disabled,
     outline: 0.1rem solid hsl(10.4 54% 60%);
 }
 
+.border-0\.1 {
+    --border-opacity: 1;
+    border-width: 0.1rem;
+    border-style: solid;
+}
+
+.border-0\.2 {
+    --border-opacity: 1;
+    border-width: 0.2rem;
+    border-style: solid;
+}
+
+.border-gray-200 {
+    border-color: hsl(0 0% 83% / var(--border-opacity));
+}
+
+.border-gray-300 {
+    border-color: hsl(0 0% 70% / var(--border-opacity));
+}
+
+.border-gray-600 {
+    border-color: hsl(0 0% 40% / var(--border-opacity));
+}
+
+.border-gray-700 {
+    border-color: hsl(0 0% 28% / var(--border-opacity));
+}
+
+.partner:checked + .partner\:checked\:border-green-400 {
+    border-color: hsl(125 47% 48% / var(--border-opacity));
+}
+
 .rounded-0\.05 {
     border-radius: 0.05rem;
+}
+
+.rounded-0\.4 {
+    border-radius: 0.4rem;
 }
 
 .rounded-1 {

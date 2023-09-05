@@ -1,10 +1,17 @@
-use axum::{
-    response::IntoResponse,
-    http::{Request, header, HeaderValue},
-    middleware,
-};
-use axum_extra::extract::{CookieJar, cookie::Cookie};
 use serde_json::{self, Value};
+
+#[derive(Debug)]
+pub enum ColorSchemeError {
+    Json(serde_json::Error),
+    InvalidColorMode,
+    InvalidSelectedColor,
+}
+
+impl From<serde_json::Error> for ColorSchemeError {
+    fn from(err: serde_json::Error) -> ColorSchemeError {
+        ColorSchemeError::Json(err)
+    }
+}
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum ColorMode {
@@ -18,58 +25,73 @@ pub enum Theme {
     Dark,
 }
 
+
+
 #[derive(Clone)]
 pub struct ColorScheme {
     color_mode: ColorMode,
     selected_color: Theme,
-    class: String,
 }
 
 impl ColorScheme {
-    fn new() -> ColorScheme {
+    pub fn new() -> ColorScheme {
         ColorScheme { 
             color_mode: ColorMode::System,
             selected_color: Theme::Light,
-            class: String::from("system"),
         }
     }
-    fn from_json(s: &str) -> Result< ColorScheme, serde_json::Error> {
-        let v: Value = serde_json::from_str(s)?;
+
+    pub fn from_string(color_mode_string: &str, selected_color_string: &str) -> Result<ColorScheme, ColorSchemeError> {
+        let color_mode: ColorMode = match color_mode_string {
+            "system" => ColorMode::System,
+            "select" => ColorMode::Select,
+            _ => return Err(ColorSchemeError::InvalidColorMode),
+        };
+        let selected_color: Theme = match selected_color_string {
+            "light" => Theme::Light,
+            "dark" => Theme::Dark,
+            _ => return Err(ColorSchemeError::InvalidSelectedColor),
+        };
+        Ok(ColorScheme { color_mode, selected_color })
+    }
+
+    /* 
+    pub fn from_json(color_scheme_json: &str) -> Result<ColorScheme, ColorSchemeError> {
+        let v: Value = serde_json::from_str(color_scheme_json)?;
+    
         let color_mode: ColorMode = match &v["color_mode"] {
             Value::String(mode) => match mode.as_str() {
+                "system" => ColorMode::System,
                 "select" => ColorMode::Select,
-                _ => ColorMode::System
+                _ => return Err(ColorSchemeError::InvalidColorMode),
             },
-            _ => ColorMode::System,
+            _ => return Err(ColorSchemeError::InvalidColorMode),
         };
+        
         let selected_color: Theme = match &v["selected_color"] {
             Value::String(theme) => match theme.as_str() {
                 "dark" => Theme::Dark,
-                _ => Theme::Light
+                "light" => Theme::Light,
+                _ => return Err(ColorSchemeError::InvalidSelectedColor),
             },
-            _ => Theme::Light,
+            _ => return Err(ColorSchemeError::InvalidSelectedColor),
         };
-        let class = match color_mode {
-            ColorMode::System => String::from(""),
-            ColorMode::Select => match selected_color {
-                Theme::Dark => String::from("dark"),
-                Theme::Light => String::from("light"),
-            }
-        };
-        Ok(ColorScheme { color_mode, selected_color, class })
+        
+        Ok(ColorScheme { color_mode, selected_color })
     }
+    */
 
-    fn color_mode_string(&self) -> &str {
+    pub fn color_mode_string(&self) -> String {
         match self.color_mode {
-            ColorMode::Select => "select",
-            ColorMode::System => "system",
+            ColorMode::System => String::from("system"),
+            ColorMode::Select => String::from("select"),
         }
     }
 
-    fn selected_color_string(&self) -> &str {
+    pub fn selected_color_string(&self) -> String {
         match self.selected_color {
-            Theme::Dark => "dark",
-            Theme::Light => "light",
+            Theme::Dark => String::from("dark"),
+            Theme::Light => String::from("light"),
         }
     }
 
@@ -81,50 +103,71 @@ impl ColorScheme {
         self.selected_color
     }
 
-    pub fn class(&self) -> &str {
-        self.class.as_str()
+    pub fn derive_class(&self) -> String {
+        match self.color_mode {
+            ColorMode::System => String::from("system"),
+            ColorMode::Select => match self.selected_color {
+                Theme::Dark => String::from("dark"),
+                Theme::Light => String::from("light"),
+            }
+        }
+    }
+    
+    pub fn color_mode_cookie(&self) -> String {
+        format!("color_mode={}; Path=/; Secure; SameSite=Lax; HttpOnly", self.color_mode_string())
     }
 
-    fn to_cookie_value(&self) -> String {
+    pub fn selected_color_cookie(&self) -> String {
+        format!("selected_color={}; Path=/; Secure; SameSite=Lax; HttpOnly", self.selected_color_string())
+    }
+    
+    /*
+    pub fn to_cookie(&self) -> String {
+        let color_mode = self.color_mode_string();
+        let selected_color = self.selected_color_string();
+        format!("color_scheme={{\"color_mode\":\"{color_mode}\", \"selected_color\":\"{selected_color}\"}}")
+    }
+    
+    pub fn to_cookie(&self) -> String {
+        let color_mode = self.color_mode_string();
+        let selected_color = self.selected_color_string();
+        format!("color_scheme={{\"color_mode\":\"{color_mode}\", \"selected_color\":\"{selected_color}\"}}; Path=/; Secure; SameSite=Lax; HttpOnly")
+    }
+
+    pub fn to_cookie_value(&self) -> String {
         let color_mode = self.color_mode_string();
         let selected_color = self.selected_color_string();
         format!("{{\"color_mode\":\"{color_mode}\", \"selected_color\":\"{selected_color}\"}}")
     }
+    */
 }
 
+/*
 pub async fn extract_theme<B>(
     mut req: Request<B>,
     next: middleware::Next<B>,
 ) -> impl IntoResponse {
-    // transform the request...
-    let mut jar = CookieJar::from_headers(req.headers());
     
-    let mut color_scheme = ColorScheme::new();
+    let jar = CookieJar::from_headers(req.headers());
+    
     if let Some(cookie) = jar.get("color_scheme") {
-        if let Ok(cs) = ColorScheme::from_json(cookie.value()) {
-            color_scheme = cs;
-        };
-        let theme_cookie = Cookie::build("color_scheme", color_scheme.to_cookie_value())
-            .path("/").secure(true).same_site(cookie::SameSite::Lax).finish();
-        jar = jar
-            .remove(Cookie::named("color_scheme"))
-            .add(theme_cookie);
-    } else {
-        let theme_cookie = Cookie::build("color_scheme", color_scheme.to_cookie_value())
-                .path("/").secure(true).same_site(cookie::SameSite::Lax).finish();
-        jar = jar
-            .add(theme_cookie);
+        let color_scheme = ColorScheme::from_json(cookie.value())
+            .unwrap_or_else(|_| ColorScheme::new());
+        req.extensions_mut().insert(color_scheme);
+        let res = next.run(req).await;
+        return res
+    
     }
-
-    req.extensions_mut().insert(color_scheme);
+    let color_scheme = ColorScheme::new();
+    req.extensions_mut().insert(color_scheme.clone());
     let mut res = next.run(req).await;
-    // transform the response...
-    let cookie_string: String = jar.iter().map(|c| c.to_string()).collect::<Vec<String>>().join("; ");
-    if let Ok(header_value) = HeaderValue::from_str(&cookie_string) {
+    
+    if let Ok(color_scheme_cookie) = HeaderValue::from_str(&color_scheme.to_cookie()) {
         res.headers_mut().insert(
             header::SET_COOKIE,
-            header_value,
+            color_scheme_cookie,
         );
     }
     res
 }
+*/

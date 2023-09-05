@@ -2,15 +2,16 @@ use maud::{DOCTYPE, html, Markup};
 use crate::{icon, page, component};
 
 /// A basic header with a dynamic `page_title`.
-pub fn head(page_title: &str, theme: &str) -> Markup {
+pub fn head(page_title: &str, theme: String) -> Markup {
     html! {
         (DOCTYPE)
-        html class=(theme) lang="en-US" {
+        html lang="en-US" class=(theme) {
             head {
                 meta charset="utf-8";
                 title { (page_title) }
                 link rel="stylesheet" type="text/css" href="/assets/utils.css";
-                script src="/assets/htmx.min.js" defer {};
+                script src="/assets/htmx.min.js" {}
+                script src="/assets/set-theme.js" {}
             }
         }
     }

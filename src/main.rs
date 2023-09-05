@@ -1,14 +1,26 @@
 use axum::{
-    middleware,
-    routing::get,
+    routing::{get, put},
     Router,
+    extract,
+    Extension,
+    Form,
+    response::{AppendHeaders, IntoResponse}, 
+    http::header::SET_COOKIE,
 };
-use maud::{html, Markup};
+
+use axum_extra::extract::{cookie::Cookie, CookieJar};
+use maud::html;
 use tower_http::services::ServeDir;
 use serde_json;
+use serde::Deserialize;
 use std::env;
 use std::fs;
 use std::sync::Arc;
+use std::net::SocketAddr;
+use tracing::log::error;
+use theme::ColorScheme;
+use tower_http::trace::{self, TraceLayer};
+use tracing::Level;
 
 mod icon;
 mod component;
@@ -27,6 +39,13 @@ async fn main() {
     let fm_list: Vec<page::FakeMessage> = serde_json::from_str(&fake_messages)
         .expect("Should be able to parse fake-message json from string");
     let shared_fm_list = Arc::new(fm_list);
+
+    let (non_blocking, _guard) = tracing_appender::non_blocking(std::io::stdout());
+    tracing_subscriber::fmt()
+        .compact()
+        .with_max_level(tracing::Level::INFO)
+        .with_writer(non_blocking)
+        .init();
     
     let app = Router::new()
         .route("/", get(home))
@@ -35,54 +54,130 @@ async fn main() {
         .route("/conversations/:id", get(conversation))
         .layer(axum::Extension(shared_fm_list))
         .route("/settings", get(settings))
-        .layer(middleware::from_fn(theme::extract_theme))
+        .route("/settings/theme", put(settings_theme))
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new()
+                    .level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new()
+                    .level(Level::INFO)),
+        )
         .nest_service("/assets", ServeDir::new(&assets_path));
 
-    println!("\n\tServing on localhost:3000\n");
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+    tracing::info!("listening on {}", addr);
     
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+    axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .unwrap();
 }
 
-async fn home(axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>) -> Markup {
-    html! {
-        (page::home(color_scheme.class()))
-    }
+async fn home(jar: CookieJar) -> impl IntoResponse {
+    let (color_scheme, jar) = init_and_extract_theme(jar);
+    (
+        jar,
+        html! {
+            (template::head("Cait - Home", color_scheme.derive_class()))
+            (page::home())
+        }
+    )
 }
 
-async fn admin(axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>) -> Markup {
-    html! {
-        (page::admin(color_scheme.class()))
-    }
+async fn admin(jar: CookieJar) -> impl IntoResponse {
+    let (color_scheme, jar) = init_and_extract_theme(jar);
+    (
+        jar,
+        html! {
+            (template::head("Cait - Admin", color_scheme.derive_class()))
+            (page::admin())
+        }
+    )
 }
 
 async fn conversations(
-    axum::Extension(fm_list): axum::Extension<Arc<Vec<page::FakeMessage>>>,
-    axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>,
-) -> Markup {
-    html! {
-        (page::conversations(color_scheme.class(), fm_list.as_ref()))
-    }
+    Extension(fm_list): Extension<Arc<Vec<page::FakeMessage>>>,
+    jar: CookieJar,
+) -> impl IntoResponse {
+    let (color_scheme, jar) = init_and_extract_theme(jar);
+    (
+        jar,
+        html! {
+            (template::head("Cait - Conversations", color_scheme.derive_class()))
+            (page::conversations(fm_list.as_ref()))
+        }
+    )
 }
-
 
 async fn conversation(
-    axum::extract::Path(id): axum::extract::Path<String>, 
-    axum::Extension(fm_list): axum::Extension<Arc<Vec<page::FakeMessage>>>,
-    axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>,
-) -> Markup {
-    html! {
-        (page::conversation(color_scheme.class(), &id, fm_list.as_ref()))
-    }
+    extract::Path(id): extract::Path<String>, 
+    Extension(fm_list): Extension<Arc<Vec<page::FakeMessage>>>,
+    jar: CookieJar
+) -> impl IntoResponse {
+    let (color_scheme, jar) = init_and_extract_theme(jar);
+    (
+        jar,
+        html! {
+            (template::head(&format!("cait - {id}"), color_scheme.derive_class()))
+            (page::conversation(&id, fm_list.as_ref()))
+        }
+    )
 }
 
+async fn settings(jar: CookieJar) -> impl IntoResponse {
+    let (color_scheme, jar) = init_and_extract_theme(jar);
+    (
+        jar,
+        html! {
+            (template::head("Cait - Settings", color_scheme.derive_class()))
+            (page::settings(color_scheme))
+        }
+    )
+}
 
-async fn settings(axum::Extension(color_scheme): axum::Extension<theme::ColorScheme>) -> Markup {
-    html! {
-        (page::settings(color_scheme))
+async fn settings_theme(Form(theme_form): Form<ThemeForm>) -> impl IntoResponse {
+    let color_scheme = extract_theme_from_form(theme_form);
+    (
+        AppendHeaders([(SET_COOKIE, color_scheme.color_mode_cookie())]),
+        AppendHeaders([(SET_COOKIE, color_scheme.selected_color_cookie())]),
+        html! {
+            (component::theme_preference(color_scheme, true))
+        }
+    )
+}
+
+fn init_and_extract_theme(jar: CookieJar) -> (ColorScheme, CookieJar) {
+    if let Some(color_mode_cookie) = jar.get("color_mode") {
+        if let Some(selected_color_cookie) = jar.get("selected_color") {
+            match ColorScheme::from_string(color_mode_cookie.value(), selected_color_cookie.value()) {
+                Ok(color_scheme) => return (color_scheme, jar),
+                Err(e) => {
+                    error!("Failed to parse color scheme from cookies: {:?}", e);
+                },
+            }
+        }
     }
+    
+    let color_scheme = ColorScheme::new();
+    let color_mode_cookie = Cookie::build("color_mode", color_scheme.color_mode_string())
+        .path("/").secure(true).same_site(cookie::SameSite::Lax).http_only(true).finish();
+    let selected_color_cookie = Cookie::build("selected_color", color_scheme.selected_color_string())
+        .path("/").secure(true).same_site(cookie::SameSite::Lax).http_only(true).finish();
+    (color_scheme, jar.add(color_mode_cookie).add(selected_color_cookie))
+}
+
+#[derive(Deserialize)]
+pub struct ThemeForm {
+    color_mode: String,
+    selected_color: String,
+}
+
+fn extract_theme_from_form(theme: ThemeForm) -> ColorScheme {
+    ColorScheme::from_string(&theme.color_mode, &theme.selected_color)
+        .unwrap_or_else(|e| {
+            error!("Failed to parse color scheme from string: {:?}", e);
+            ColorScheme::new()
+        })
 }
 
 

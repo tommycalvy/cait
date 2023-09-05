@@ -35,6 +35,12 @@ fn main() {
         fs::write(hyperscript_file_path, hyperscript_text).expect("Should be able to write hyperscript text to file");
     }
 
+    // Move and TODO: Minify js to the assets path in our_dir
+    let set_theme_js = fs::read_to_string("assets/set-theme.js")
+        .expect("Couldn't read string from set-theme.js file");
+    let set_theme_file_path = format!("{assets_path}/set-theme.js");
+    fs::write(set_theme_file_path, set_theme_js).expect("Couldn't write set-theme.js string to file");
+
 
     // lightning css
     let targets: Targets = Targets::from(Browsers {

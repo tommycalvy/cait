@@ -18,21 +18,27 @@ pub struct FakeMessage {
 
 pub fn settings(color_scheme: theme::ColorScheme) -> Markup {
     html! {
-        (template::head("Cait - Settings", color_scheme.class()))
         body {
             (template::top_navbar("Settings", html! { div {} }, html! { div {}}))
             main class="mt-6 mb-4 px-2" {
                 h3 { "Theme Preferences" }
-                (component::theme_preference(color_scheme))
+                (component::theme_preference(color_scheme, false))
+                h1 class="w-full h-10" { "hey..."}
+                h1 class="w-full h-10" { "hey..."}
+                h1 class="w-full h-10" { "hey..."}
+                h1 class="w-full h-10" { "hey..."}
+                h1 class="w-full h-10" { "hey..."}
+                h1 class="w-full h-10" { "hey..."}
+                h1 class="w-full h-10" { "hey..."}
+                h1 class="w-full h-10" { "hey..."}
             }
             (template::bottom_navbar(Pathname::Settings))
         }
     }
 }
 
-pub fn conversations(color_scheme_class: &str, messages: &Vec<FakeMessage>) -> Markup {
+pub fn conversations(messages: &Vec<FakeMessage>) -> Markup {
     html! {
-        (template::head("Cait - Conversations", color_scheme_class))
         body {
             (template::top_navbar(
                 "Conversations", 
@@ -46,9 +52,8 @@ pub fn conversations(color_scheme_class: &str, messages: &Vec<FakeMessage>) -> M
     }
 }
 
-pub fn conversation(color_scheme_class: &str, title: &str, messages: &Vec<FakeMessage>) -> Markup {
+pub fn conversation(title: &str, messages: &Vec<FakeMessage>) -> Markup {
     html! {
-        (template::head("Cait - Conversation", color_scheme_class))
         body {
             (template::top_navbar(
                 title, 
@@ -61,18 +66,16 @@ pub fn conversation(color_scheme_class: &str, title: &str, messages: &Vec<FakeMe
     }
 }
 
-pub fn home(color_scheme_class: &str) -> Markup {
+pub fn home() -> Markup {
     html! {
-        (template::head("Cait - Home", color_scheme_class))
         body {
             (template::bottom_navbar(Pathname::Home))
         }
     }
 }
 
-pub fn admin(color_scheme_class: &str) -> Markup {
+pub fn admin() -> Markup {
     html! {
-        (template::head("Cait - Admin", color_scheme_class))
         body {
             (template::bottom_navbar(Pathname::Admin))
         }
