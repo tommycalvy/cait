@@ -22,81 +22,36 @@ pub fn theme_preference(color_scheme: ColorScheme, set_theme: bool) -> Markup {
             div #selected-color class="flex justify-between w-12" {
                 @if is_system && is_light { input type="hidden" name="selected_color" value="light"; }
                 input #light-theme type="radio" name="selected_color" value="light" checked[is_light]
-                    disabled[is_system] class="hidden partner" hx-put="/settings/theme";
-                label for="light-theme" class="bg-white text-black w-5 p-0.4 border-0.1 rounded-0.4 transition
+                    disabled[is_system] class="hidden partner" hx-put="/settings/theme" 
+                    hx-indicator="#light-theme-label";
+                label #light-theme-label for="light-theme" class="bg-white text-black w-5 p-0.4 border-0.1 rounded-0.4 transition
                     border-gray-600 partner:checked:border-green-400 partner:disabled:opacity-50 text-center
                     partner:disabled:cursor-not-allowed select-none cursor-pointer partner:checked:cursor-default
                     flex justify-between items-center" {
-                    div class="w-1.4 h-1.4" {
+                    div class="w-1.4 h-1.4 htmx-request:opacity-0 transition" {
                         (icon::sun())
                     }
+                    img src="assets/tail-spin-black.svg" class="w-1.2 h-1.2 htmx-indicator absolute";
                     "Light"
-                    //img class="htmx-indicator transition" {
-                    //    (icon::oval_indicator())
-                    //}
                 }
                 @if is_system && is_dark { input type="hidden" name="selected_color" value="dark"; }
                 input #dark-theme type="radio" name="selected_color" value="dark" checked[is_dark]
-                    disabled[is_system] class="hidden partner" hx-put="/settings/theme";
-                label for="dark-theme" class="bg-black text-white w-5 p-0.4 border-0.1 rounded-0.4 transition
-                    border-gray-300 partner:checked:border-green-400 partner:disabled:opacity-50 text-center
-                    partner:disabled:cursor-not-allowed select-none cursor-pointer partner:checked:cursor-default
-                    flex justify-between items-center" {
-                    div class="w-1.4 h-1.4" {
+                    disabled[is_system] class="hidden partner" hx-put="/settings/theme" 
+                    hx-indicator="#dark-theme-label";
+                label #dark-theme-label for="dark-theme" class="bg-black text-white w-5 p-0.4 border-0.1 
+                    rounded-0.4 transition border-gray-300 partner:checked:border-green-400 
+                    partner:disabled:opacity-50 text-center partner:disabled:cursor-not-allowed select-none 
+                    cursor-pointer partner:checked:cursor-default flex justify-between items-center" {
+                    div class="w-1.4 h-1.4 htmx-request:opacity-0 transition" {
                         (icon::moon())
                     }
-                    "Dark" 
-                    //img class="htmx-indicator transition" {
-                    //    (icon::oval_indicator())
-                    //}
+                    img src="assets/tail-spin-white.svg" class="w-1.2 h-1.2 htmx-indicator absolute";
+                    "Dark"
                 }
             }
         }
     }
 }
-
-/*
-pub fn theme_toggle(checked: bool, disabled: bool) -> Markup {
-    html! {
-        label #theme-toggle class="flex justify-between items-center relative gap-1" {
-            span .select-none."opacity-50"[disabled].transition."duration-30" { "Light" }
-
-            input #selected-color name="selected_color" value="dark" type="checkbox" checked[checked] disabled[disabled]
-                class="m-0 left-0 bottom-0 w-4 h-2 rounded-2 transition cursor-pointer 
-                    appearance-none disabled:cursor-not-allowed bg-gold duration-30
-                    checked:bg-blue-night disabled:bg-opacity-50 checked:disabled:bg-opacity-22
-                    dark:disabled:bg-opacity-35 dark:checked:disabled:bg-opacity-50 partner";
-
-            span class="absolute content-empty cursor-pointer w-1.6 h-1.6 right-1/2+0.1 rounded-full
-                        bg-gold-dark transition duration-30 partner:disabled:bg-opacity-50 
-                        partner:disabled:cursor-not-allowed partner:checked:bg-blue-twilight
-                        transform partner:checked:translate-x-2 partner:checked:disabled:bg-opacity-30
-                        dark:partner:disabled:bg-opacity-30 dark:partner:checked:disabled:bg-opacity:35
-                        parent"
-            {
-                span class="absolute rounded-full top-1/2-0.4 left-1/2-0.4 w-0.8 h-0.8 transition
-                            transform scale-50 partner:checked:parent:scale-100 duration-30
-                            shadow-inner offset-x-0.4 -offset-y-0.4 blur-radius-0 spread-radius-0.5
-                            shadow-color-white shadow-opacity-100 
-                            partner:disabled:parent:shadow-opacity-50
-                            partner:checked:parent:offset-x-0.2 partner:checked:parent:-offset-y-0.2
-                            partner:checked:parent:spread-radius-0.2" {}
-
-                @for n in 0..8 {
-                    @let deg1 = n * 45;
-                    @let deg2 = (n + 1) * 45;
-                    span class={ "absolute rounded-0.05 top-1/2 left-1/2-0.05 w-0.1 h-0.2 bg-white transition 
-                            origin-center-top transform-rotate-first translate-y-0.4 duration-30
-                            partner:disabled:parent:bg-opacity-50 partner:checked:parent:opacity-0
-                            partner:checked:parent:translate-y-0.8 
-                            rotate-"(deg1) " partner:checked:parent:rotate-"(deg2) } {}
-                }
-            }
-            span .select-none."opacity-50"[disabled].transition."duration-30" { "Dark" }
-        }
-    }
-}
-*/
 
 pub fn search_bar() -> Markup {
     html! {
@@ -144,35 +99,3 @@ pub fn prompt_input() -> Markup {
         }
     }
 }
-
-/*
-script {"document.getElementById('color-mode').addEventListener('change', function() { 
-    var selectedColor = document.getElementById('selected-color');
-    var element = document.documentElement;
-    if (this.value === 'system') {
-        element.classList.remove('light');
-        element.classList.remove('dark');
-    } else {
-        if (selectedColor.checked) {
-            element.classList.add('dark');
-        } else {
-            element.classList.add('light');
-        }
-    }
-    htmx.trigger('#color-scheme', 'change-theme', {});
- });
- document.getElementById('selected-color').addEventListener('change', function() {
-    var colorMode = document.getElementById('color-mode');
-    var element = document.documentElement;
-    if (colorMode.value === 'select') {
-        if (this.checked) {
-            element.classList.remove('light');
-            element.classList.add('dark');
-        } else {
-            element.classList.remove('dark');
-            element.classList.add('light');
-        }
-    }
-    htmx.trigger('#color-scheme', 'change-theme', {});
- });"}
- */

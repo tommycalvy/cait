@@ -41,6 +41,20 @@ fn main() {
     let set_theme_file_path = format!("{assets_path}/set-theme.js");
     fs::write(set_theme_file_path, set_theme_js).expect("Couldn't write set-theme.js string to file");
 
+    // Move and TODO: Minify js to the assets path in our_dir
+    let tail_spin_white_svg = fs::read_to_string("assets/tail-spin-white.svg")
+        .expect("Couldn't read string from tail-spin-white.svg file");
+    let tail_spin_white_file_path = format!("{assets_path}/tail-spin-white.svg");
+    fs::write(tail_spin_white_file_path, tail_spin_white_svg)
+        .expect("Couldn't write tail-spin-white.svg string to file");
+
+    // Move and TODO: Minify js to the assets path in our_dir
+    let tail_spin_black_svg = fs::read_to_string("assets/tail-spin-black.svg")
+        .expect("Couldn't read string from tail-spin-black.svg file");
+    let tail_spin_black_file_path = format!("{assets_path}/tail-spin-black.svg");
+    fs::write(tail_spin_black_file_path, tail_spin_black_svg)
+        .expect("Couldn't write tail-spin-black.svg string to file");
+
 
     // lightning css
     let targets: Targets = Targets::from(Browsers {

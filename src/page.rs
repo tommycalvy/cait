@@ -23,14 +23,6 @@ pub fn settings(color_scheme: theme::ColorScheme) -> Markup {
             main class="mt-6 mb-4 px-2" {
                 h3 { "Theme Preferences" }
                 (component::theme_preference(color_scheme, false))
-                h1 class="w-full h-10" { "hey..."}
-                h1 class="w-full h-10" { "hey..."}
-                h1 class="w-full h-10" { "hey..."}
-                h1 class="w-full h-10" { "hey..."}
-                h1 class="w-full h-10" { "hey..."}
-                h1 class="w-full h-10" { "hey..."}
-                h1 class="w-full h-10" { "hey..."}
-                h1 class="w-full h-10" { "hey..."}
             }
             (template::bottom_navbar(Pathname::Settings))
         }

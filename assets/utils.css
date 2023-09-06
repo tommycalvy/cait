@@ -36,6 +36,11 @@ input {
     font-size: 1rem;
 }
 
+img {
+    overflow-clip-margin: auto;
+    overflow: visible;
+}
+
 a, a:link, a:visited, a:hover, a:active {
     text-decoration: none;
 }
@@ -44,8 +49,22 @@ a, a:link, a:visited, a:hover, a:active {
     display: flex;
 }
 
-.hidden {
+
+.inline,
+.htmx-request .htmx-request\:inline,
+.htmx-request.htmx-request\:inline {
+    display: inline;
+}
+
+.hidden,
+.htmx-request .htmx-request\:hidden,
+.htmx-request.htmx-request\:hidden {
     display: none;
+}
+
+.fill-current,
+.fill-current svg {
+    fill: currentColor;
 }
 
 .flex-col {
@@ -236,12 +255,24 @@ a, a:link, a:visited, a:hover, a:active {
     padding-left: 1rem;
 }
 
+.w-0 {
+    width: 0px;
+}
+
 .w-0\.1 {
     width: 0.1rem;
 }
 
 .w-0\.8 {
     width: 0.8rem;
+}
+
+.w-1 {
+    width: 1rem;
+}
+
+.w-1\.2 {
+    width: 1.2rem;
 }
 
 .w-1\.4 {
@@ -300,12 +331,24 @@ a, a:link, a:visited, a:hover, a:active {
     max-width: 50rem;
 }
 
+.h-0 {
+    height: 0px;
+}
+
 .h-0\.2 {
     height: 0.2rem;
 }
 
 .h-0\.8 {
     height: 0.8rem;
+}
+
+.h-1 {
+    height: 1rem;
+}
+
+.h-1\.2 {
+    height: 1.2rem;
 }
 
 .h-1\.4 {
@@ -478,6 +521,8 @@ a, a:link, a:visited, a:hover, a:active {
     color: hsl(10.4 54% 60% / var(--text-opacity));
 }
 
+.htmx-request .htmx-request\:opacity-0,
+.htmx-request.htmx-request\:opacity-0,
 .partner:checked + .parent .partner\:checked\:parent\:opacity-0 {
     opacity: 0;
 }
@@ -743,12 +788,33 @@ a, a:link, a:visited, a:hover, a:active {
     transition-duration: 0.15s;
 }
 
-.duration-18 {
-    transition-duration: 0.18s;
+.htmx-request .htmx-request\:duration-180,ƒ
+.htmx-request.htmx-request\:duration-180 {
+    transition-duration: 180ms;
 }
 
-.duration-30 {
-    transition-duration: 0.3s;
+.duration-180 {
+    transition-duration: 180ms;
+}
+
+.duration-240 {
+    transition-duration: 240ms;
+}
+
+.duration-300 {
+    transition-duration: 300ms;
+}
+
+.duration-500 {
+    transition-duration: 500ms;
+}
+
+.delay-300 {
+    transition-delay: 300ms;
+}
+
+.ease-in {
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 
