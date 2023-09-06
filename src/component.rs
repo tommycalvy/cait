@@ -28,7 +28,7 @@ pub fn theme_preference(color_scheme: ColorScheme, set_theme: bool) -> Markup {
                     border-gray-600 partner:checked:border-green-400 partner:disabled:opacity-50 text-center
                     partner:disabled:cursor-not-allowed select-none cursor-pointer partner:checked:cursor-default
                     flex justify-between items-center" {
-                    div class="w-1.4 h-1.4 htmx-request:opacity-0 transition" {
+                    div class="w-1.4 h-1.4 htmx-request:opacity-0 transition duration-0 htmx-request:duration-180" {
                         (icon::sun())
                     }
                     img src="assets/tail-spin-black.svg" class="w-1.2 h-1.2 htmx-indicator absolute";
@@ -42,7 +42,7 @@ pub fn theme_preference(color_scheme: ColorScheme, set_theme: bool) -> Markup {
                     rounded-0.4 transition border-gray-300 partner:checked:border-green-400 
                     partner:disabled:opacity-50 text-center partner:disabled:cursor-not-allowed select-none 
                     cursor-pointer partner:checked:cursor-default flex justify-between items-center" {
-                    div class="w-1.4 h-1.4 htmx-request:opacity-0 transition" {
+                    div class="w-1.4 h-1.4 htmx-request:opacity-0 transition duration-0 htmx-request:duration-180" {
                         (icon::moon())
                     }
                     img src="assets/tail-spin-white.svg" class="w-1.2 h-1.2 htmx-indicator absolute";

@@ -788,7 +788,11 @@ a, a:link, a:visited, a:hover, a:active {
     transition-duration: 0.15s;
 }
 
-.htmx-request .htmx-request\:duration-180,ƒ
+.duration-0 {
+    transition-duration: 0ms;
+}
+
+.htmx-request .htmx-request\:duration-180,
 .htmx-request.htmx-request\:duration-180 {
     transition-duration: 180ms;
 }
