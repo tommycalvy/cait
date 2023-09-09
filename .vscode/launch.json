@@ -40,6 +40,24 @@
             },
             "args": [],
             "cwd": "${workspaceFolder}"
-        }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug llama-sys library in 'cait'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=llama-sys",
+                    "--package=llama-sys"
+                ],
+                "filter": {
+                    "name": "llama-sys",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}/cait"
+        },
     ]
 }
