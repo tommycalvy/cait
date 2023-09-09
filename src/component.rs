@@ -24,14 +24,15 @@ pub fn theme_preference(color_scheme: ColorScheme, set_theme: bool) -> Markup {
                 input #light-theme type="radio" name="selected_color" value="light" checked[is_light]
                     disabled[is_system] class="hidden partner" hx-put="/settings/theme" 
                     hx-indicator="#light-theme-label";
-                label #light-theme-label for="light-theme" class="bg-white text-black w-5 p-0.4 border-0.1 rounded-0.4 transition
-                    border-gray-600 partner:checked:border-green-400 partner:disabled:opacity-50 text-center
-                    partner:disabled:cursor-not-allowed select-none cursor-pointer partner:checked:cursor-default
-                    flex justify-between items-center" {
-                    div class="w-1.4 h-1.4 htmx-request:opacity-0 transition duration-0 htmx-request:duration-180" {
+                label #light-theme-label for="light-theme" class="bg-white text-black w-5 p-0.4 border-0.1 
+                    rounded-0.4 transition border-gray-600 partner:checked:border-green-400 
+                    partner:disabled:opacity-50 text-center partner:disabled:cursor-not-allowed select-none 
+                    cursor-pointer partner:checked:cursor-default flex justify-between items-center" {
+                    div class="w-1.4 h-1.4 transition htmx-request:opacity-0 duration-0 htmx-request:duration-180" {
                         (icon::sun())
                     }
-                    img src="assets/tail-spin-black.svg" class="w-1.2 h-1.2 htmx-indicator absolute";
+                    img src="assets/tail-spin-black.svg" class="w-1.2 h-1.2 absolute transition opacity-0 
+                        htmx-request:opacity-100 duration-0 htmx-request:duration-180 delay-0 htmx-request:delay-30";
                     "Light"
                 }
                 @if is_system && is_dark { input type="hidden" name="selected_color" value="dark"; }
@@ -42,10 +43,11 @@ pub fn theme_preference(color_scheme: ColorScheme, set_theme: bool) -> Markup {
                     rounded-0.4 transition border-gray-300 partner:checked:border-green-400 
                     partner:disabled:opacity-50 text-center partner:disabled:cursor-not-allowed select-none 
                     cursor-pointer partner:checked:cursor-default flex justify-between items-center" {
-                    div class="w-1.4 h-1.4 htmx-request:opacity-0 transition duration-0 htmx-request:duration-180" {
+                    div class="w-1.4 h-1.4 transition htmx-request:opacity-0 duration-0 htmx-request:duration-180" {
                         (icon::moon())
                     }
-                    img src="assets/tail-spin-white.svg" class="w-1.2 h-1.2 htmx-indicator absolute";
+                    img src="assets/tail-spin-white.svg" class="w-1.2 h-1.2 absolute transition opacity-0 
+                        htmx-request:opacity-100 duration-0 htmx-request:duration-180 delay-0 htmx-request:delay-30";
                     "Dark"
                 }
             }

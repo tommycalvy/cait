@@ -521,6 +521,7 @@ a, a:link, a:visited, a:hover, a:active {
     color: hsl(10.4 54% 60% / var(--text-opacity));
 }
 
+.opacity-0,
 .htmx-request .htmx-request\:opacity-0,
 .htmx-request.htmx-request\:opacity-0,
 .partner:checked + .parent .partner\:checked\:parent\:opacity-0 {
@@ -533,6 +534,11 @@ a, a:link, a:visited, a:hover, a:active {
 
 .partner:disabled + .partner\:disabled\:opacity-50 {
     opacity: 0.5;
+}
+
+.htmx-request .htmx-request\:opacity-100,
+.htmx-request.htmx-request\:opacity-100 {
+    opacity: 1;
 }
 
 .checked\:disabled\:bg-opacity-22:checked:disabled {
@@ -805,12 +811,23 @@ a, a:link, a:visited, a:hover, a:active {
     transition-duration: 240ms;
 }
 
+.htmx-request .htmx-request\:duration-300,
+.htmx-request.htmx-request\:duration-300,
 .duration-300 {
     transition-duration: 300ms;
 }
 
 .duration-500 {
     transition-duration: 500ms;
+}
+
+.delay-0 {
+    transition-delay: 0ms;
+}
+
+.htmx-request .htmx-request\:delay-30,
+.htmx-request.htmx-request\:delay-30 {
+    transition-delay: 30ms;
 }
 
 .delay-300 {
