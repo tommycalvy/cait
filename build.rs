@@ -17,6 +17,11 @@ fn main() {
         fs::create_dir_all(&assets_path).expect("Should be able to create assets directory if not there");
     }
 
+    let models_path = format!("{out_path}/models");
+    if !Path::new(&models_path).is_dir() {
+        fs::create_dir_all(&models_path).expect("Should be able to create models directory if not there");
+    }
+
     // Download htmx
     let htmx_file_path = format!("{assets_path}/htmx.min.js");
     if !Path::new(&htmx_file_path).is_file() {
@@ -24,6 +29,15 @@ fn main() {
             .expect("Should be able to download htmx source code");
         let htmx_text = htmx_body.text().expect("Should be able to convert htmx body to text");
         fs::write(htmx_file_path, htmx_text).expect("Should be able to write htmx text to file");
+    }
+
+    // Download htmx sse extension
+    let htmx_sse_file_path = format!("{assets_path}/sse.js");
+    if !Path::new(&htmx_sse_file_path).is_file() {
+        let htmx_sse_body = reqwest::blocking::get("https://unpkg.com/htmx.org/dist/ext/sse.js")
+            .expect("Should be able to download htmx sse extension source code");
+        let htmx_sse_text = htmx_sse_body.text().expect("Should be able to convert htmx sse extension body to text");
+        fs::write(htmx_sse_file_path, htmx_sse_text).expect("Should be able to write htmx sse extension text to file");
     }
 
     // Download hyperscript
@@ -34,6 +48,15 @@ fn main() {
         let hyperscript_text = hyperscript_body.text().expect("Should be able to convert hyperscript body to text");
         fs::write(hyperscript_file_path, hyperscript_text).expect("Should be able to write hyperscript text to file");
     }
+
+    // Download Model
+    //let llama_small_model_path = format!("{models_path}/llama-2-7b.ggmlv3.q2_K.bin");
+    //if !Path::new(&llama_small_model_path).is_file() {
+    //    let model_body = reqwest::blocking::get("https://huggingface.co/TheBloke/Llama-2-7B-GGML/resolve/main/llama-2-7b.ggmlv3.q2_K.bin")
+    //        .expect("Couldn't download llama 2 model from huggingface");
+    //    let model_text = model_body.text().expect("Couldn't convert model body to text");
+    //    fs::write(llama_small_model_path, model_text).expect("Couldn't write model text to file");
+    //}
 
     // Move and TODO: Minify js to the assets path in our_dir
     let set_theme_js = fs::read_to_string("assets/set-theme.js")

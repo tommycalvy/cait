@@ -19,6 +19,10 @@ cookie = "0.17.0"
 sailfish = "0.8.0"
 maud = { version = "0.25.0", features = ["axum"] }
 tracing-appender = "0.2.2"
+llm-chain = { git = "https://github.com/tommycalvy/llm-chain.git", branch = "cait-v0.2"}
+llm-chain-llama = { git = "https://github.com/tommycalvy/llm-chain.git", branch = "cait-v0.2"}
+tokio-stream = "0.1.14"
+futures = "0.3.28"
 
 
 [build-dependencies]

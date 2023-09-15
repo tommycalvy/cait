@@ -1,5 +1,5 @@
 use maud::{DOCTYPE, html, Markup};
-use crate::{icon, page, component};
+use crate::{icon, page};
 
 /// A basic header with a dynamic `page_title`.
 pub fn head(page_title: &str, theme: String) -> Markup {
@@ -12,6 +12,7 @@ pub fn head(page_title: &str, theme: String) -> Markup {
                 link rel="stylesheet" type="text/css" href="/assets/utils.css";
                 script src="/assets/htmx.min.js" {}
                 script src="/assets/set-theme.js" {}
+                script src="/assets/sse.js" {}
             }
         }
     }
@@ -83,14 +84,6 @@ pub fn top_navbar(title: &str, left_button: Markup, right_button: Markup) -> Mar
             div class="w-5 flex" { (left_button) }
             h3 { (title) }
             div class="w-5 flex justify-end" { (right_button) }
-        }
-    }
-}
-
-pub fn conversations_input() -> Markup {
-    html! {
-        div class="fixed bottom-0 left-0 right-0 py-2 flex justify-center blur-0.5" {
-            (component::prompt_input())
         }
     }
 }

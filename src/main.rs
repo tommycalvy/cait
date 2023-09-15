@@ -1,13 +1,17 @@
 use axum::{
     routing::{get, put},
     Router,
-    extract,
+    extract::{self, Query},
     Extension,
     Form,
-    response::{AppendHeaders, IntoResponse}, 
+    response::{
+        AppendHeaders, 
+        IntoResponse,
+        sse::{Sse, Event},
+    }, 
     http::header::SET_COOKIE,
 };
-
+use futures::stream::{self, Stream};
 use axum_extra::extract::{cookie::Cookie, CookieJar};
 use maud::html;
 use tower_http::services::ServeDir;
@@ -21,6 +25,9 @@ use tracing::log::error;
 use theme::ColorScheme;
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
+
+use tokio_stream::StreamExt as _;
+use std::{convert::Infallible, time::Duration};
 
 mod icon;
 mod component;
@@ -51,10 +58,11 @@ async fn main() {
         .route("/", get(home))
         .route("/admin", get(admin))
         .route("/conversations", get(conversations))
-        .route("/conversations/:id", get(conversation))
+        .route("/conversations/:id", get(conversation).post(message))
         .layer(axum::Extension(shared_fm_list))
         .route("/settings", get(settings))
         .route("/settings/theme", put(settings_theme))
+        .route("/chatbot", get(chatbot))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(trace::DefaultMakeSpan::new()
@@ -124,6 +132,20 @@ async fn conversation(
     )
 }
 
+#[derive(Deserialize)]
+struct Message {
+    agent: String,
+    content: String,
+}
+
+async fn message(m: Form<Message>) -> impl IntoResponse {
+    let agent = page::str_to_agent(m.agent.as_str());
+    html! {
+        (component::message(agent, m.content.as_str(), false))
+        (component::message(page::Agent::Chatbot, m.content.as_str(), true))
+    }
+}
+
 async fn settings(jar: CookieJar) -> impl IntoResponse {
     let (color_scheme, jar) = init_and_extract_theme(jar);
     (
@@ -178,6 +200,21 @@ fn extract_theme_from_form(theme: ThemeForm) -> ColorScheme {
             error!("Failed to parse color scheme from string: {:?}", e);
             ColorScheme::new()
         })
+}
+
+async fn chatbot(m: Query<Message>) -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
+    let r = format!("<span>message: {{ agent: {}, content: {} }}</span>", m.agent, m.content);
+
+    let stream = stream::repeat_with(move || 
+        Event::default().event("chatbot").data(r.as_str()))
+        .map(Ok)
+        .throttle(Duration::from_secs(1));
+
+    Sse::new(stream).keep_alive(
+        axum::response::sse::KeepAlive::new()
+            .interval(Duration::from_secs(1))
+            .text("keep-alive-text"),
+    )
 }
 
 

@@ -587,6 +587,10 @@ a, a:link, a:visited, a:hover, a:active {
     --bg-opacity: 0.65;
 }
 
+.outline-gray-600 {
+    outline: 0.1rem solid hsl(0 0% 40%);
+}
+
 .focus-within\:outline-terracotta-400:focus-within {
     outline: 0.1rem solid hsl(10.4 54% 60%);
 }

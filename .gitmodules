@@ -1,3 +1,0 @@
-[submodule "llm-chain"]
-	path = llm-chain
-	url = https://github.com/sobelio/llm-chain.git

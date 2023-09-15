@@ -1,5 +1,5 @@
-use maud::{html, Markup};
-use crate::{theme::{ColorScheme, ColorMode, Theme}, icon};
+use maud::{html, Markup, PreEscaped};
+use crate::{theme::{ColorScheme, ColorMode, Theme}, icon, page::Agent};
 
 pub fn theme_preference(color_scheme: ColorScheme, set_theme: bool) -> Markup {
     
@@ -87,16 +87,52 @@ pub fn primary_svg_button(link: &str, svg: Markup) -> Markup {
     }
 }
 
-pub fn prompt_input() -> Markup {
+pub fn prompt_input(id: &str) -> Markup {
+    let action = format!("/conversations/{}", id);
     html! {
-        form #send-prompt action="?" method="post" 
+        form #send-prompt action=(action) method="post" 
+            hx-post=(action) hx-target="#messages" hx-swap="beforeend show:#bottom-spacer:bottom"
             class="flex justify-center w-full px-2" {
+            input type="hidden" name="agent" value="user";
             label for="prompt-input" class="flex flex-grow gap-0.5 bg-white dark:bg-black max-w-50
-                    focus-within:outline-terracotta-400" {
-                input id="prompt-input" enterkeyhint="send" placeholder="Send a message" class="w-full";
+                    focus-within:outline-terracotta-400 outline-gray-600" {
+                input id="prompt-input" name="content" enterkeyhint="send" placeholder="Send a message" 
+                    class="w-full text-white px-1";
                 div class="p-0.4 w-2.2 text-terracotta-400" {
                     (icon::paper_airplane())
                 }
+            }
+        }
+    }
+}
+
+pub fn message(agent: Agent, content: &str, sse: bool) -> Markup {
+    let is_user = agent == Agent::User;
+    let is_chatbot = agent == Agent::Chatbot;
+    //TODO: Put in ID so that it can be swapped faster
+    html! {
+        div .flex.justify-center.w-full."pt-2"."pr-2"."pb-3"."pl-1"
+            ."bg-gray-100"[is_chatbot]."bg-white"[is_user]."dark:bg-gray-700"[is_chatbot]."dark:bg-black"[is_user] {
+            div class="flex w-50" {
+                div class="w-5" {
+                    div ."w-3"."h-3".rounded-full."mx-1".bg-dark-cyan[is_user].bg-dark-magenta[is_chatbot] {}
+                }
+                @if sse {
+                    @let (query1, query2) = match agent {
+                        Agent::User => ("/chatbot?agent=user", format!("content={content}")),
+                        Agent::Chatbot => ("/chatbot?agent=chatbot", format!("content={content}")),
+                        Agent::Other => ("/chatbot?agent=other", format!("content={content}")),
+                    };
+                    p hx-ext="sse" sse-connect={(query1) (PreEscaped("&")) (query2)} sse-swap="chatbot" 
+                        hx-swap="beforeend" hx-on="htmx:sseMessage: document.getElementById(\"bottom-spacer\").scrollIntoView({ block: \"end\", behavior: htmx.config.scrollBehavior })" {
+                        span {}
+                    }
+                } @else {
+                    p {
+                        (content)
+                    }
+                }
+                
             }
         }
     }

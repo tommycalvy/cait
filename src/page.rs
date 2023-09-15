@@ -10,6 +10,17 @@ use crate::theme;
 #[derive(PartialEq)]
 pub enum Pathname { Home, Admin, Conversations, Settings }
 
+#[derive(PartialEq, Clone, Copy)]
+pub enum Agent { User, Chatbot, Other }
+
+pub fn str_to_agent(s: &str) -> Agent {
+    match s {
+        "user" => Agent::User,
+        "chatbot" => Agent::Chatbot,
+        _ => Agent::Other,
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct FakeMessage {
     pub from: String,
@@ -44,16 +55,24 @@ pub fn conversations(messages: &Vec<FakeMessage>) -> Markup {
     }
 }
 
-pub fn conversation(title: &str, messages: &Vec<FakeMessage>) -> Markup {
+pub fn conversation(id: &str, messages: &Vec<FakeMessage>) -> Markup {
     html! {
         body {
             (template::top_navbar(
-                title, 
+                id, 
                 component::primary_svg_button("/conversations", icon::arrow_left()), 
                 html! { div {} },
             ))
-            (template::messages(messages))
-            (template::conversations_input())
+            div #messages class="flex flex-col items-center w-full" {
+                @for msg in messages {
+                    (component::message(str_to_agent(msg.from.as_str()), msg.content.as_str(), false))
+                }
+            }
+            div #bottom-spacer class="w-full min-h-4" {}
+            div class="fixed bottom-0 left-0 right-0 py-2 flex justify-center blur-0.5" {
+                (component::prompt_input(id))
+            }
+            
         }
     }
 }
