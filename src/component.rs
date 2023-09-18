@@ -123,8 +123,9 @@ pub fn message(agent: Agent, content: &str, sse: bool) -> Markup {
                         Agent::Chatbot => ("/chatbot?agent=chatbot", format!("content={content}")),
                         Agent::Other => ("/chatbot?agent=other", format!("content={content}")),
                     };
-                    p hx-ext="sse" sse-connect={(query1) (PreEscaped("&")) (query2)} sse-swap="chatbot" 
-                        hx-swap="beforeend" hx-on="htmx:sseMessage: document.getElementById(\"bottom-spacer\").scrollIntoView({ block: \"end\", behavior: htmx.config.scrollBehavior })" {
+                    p hx-ext="sse, scroll-bottom" sse-connect={(query1) (PreEscaped("&")) (query2)} 
+                        sse-swap="chatbot" hx-swap="beforeend" scroll-bottom="bottom-spacer" {
+                        //hx-on="htmx:sseMessage: document.getElementById(\"bottom-spacer\").scrollIntoView({ block: \"end\", behavior: htmx.config.scrollBehavior })" {
                         span {}
                     }
                 } @else {

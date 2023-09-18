@@ -8,6 +8,7 @@ use lightningcss::{
     targets::{Browsers, Targets},
 };
 use reqwest;
+use walkdir::{DirEntry, WalkDir};
 
 fn main() {
     let out_path = env::var("OUT_DIR").unwrap();
@@ -58,26 +59,23 @@ fn main() {
     //    fs::write(llama_small_model_path, model_text).expect("Couldn't write model text to file");
     //}
 
-    // Move and TODO: Minify js to the assets path in our_dir
-    let set_theme_js = fs::read_to_string("assets/set-theme.js")
-        .expect("Couldn't read string from set-theme.js file");
-    let set_theme_file_path = format!("{assets_path}/set-theme.js");
-    fs::write(set_theme_file_path, set_theme_js).expect("Couldn't write set-theme.js string to file");
 
-    // Move and TODO: Minify js to the assets path in our_dir
-    let tail_spin_white_svg = fs::read_to_string("assets/tail-spin-white.svg")
-        .expect("Couldn't read string from tail-spin-white.svg file");
-    let tail_spin_white_file_path = format!("{assets_path}/tail-spin-white.svg");
-    fs::write(tail_spin_white_file_path, tail_spin_white_svg)
-        .expect("Couldn't write tail-spin-white.svg string to file");
-
-    // Move and TODO: Minify js to the assets path in our_dir
-    let tail_spin_black_svg = fs::read_to_string("assets/tail-spin-black.svg")
-        .expect("Couldn't read string from tail-spin-black.svg file");
-    let tail_spin_black_file_path = format!("{assets_path}/tail-spin-black.svg");
-    fs::write(tail_spin_black_file_path, tail_spin_black_svg)
-        .expect("Couldn't write tail-spin-black.svg string to file");
-
+    // Walk the assets directory and copy them into the assets folder in the build directory
+    let walker = WalkDir::new("assets").into_iter();
+    for entry in walker.filter_entry(|e| !is_hidden(e)) {
+        let entry = entry.expect("Couldn't get entry from assets dir");
+        if entry.file_type().is_dir() {
+            continue;  // Skip directories
+        }
+        let filename = entry.file_name().to_str().expect("Couldn't convert filename to string");
+        dbg!(filename);
+        if filename == "utils.css" {
+            continue;
+        }
+        let text = fs::read_to_string(entry.path()).expect("Couldn't read entry");
+        let path = format!("{}/{}", assets_path, filename);
+        fs::write(path, text).expect("Couldn't write entry text in assets directory");
+    }
 
     // lightning css
     let targets: Targets = Targets::from(Browsers {
@@ -120,5 +118,11 @@ fn main() {
     }).unwrap();
 
     fs::write(styles_file_path, res.code).expect("Should be able to write minified css string to file");
-    
+}
+
+fn is_hidden(entry: &DirEntry) -> bool {
+    entry.file_name()
+         .to_str()
+         .map(|s| s.starts_with("."))
+         .unwrap_or(false)
 }

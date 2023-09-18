@@ -13,6 +13,7 @@ pub fn head(page_title: &str, theme: String) -> Markup {
                 script src="/assets/htmx.min.js" {}
                 script src="/assets/set-theme.js" {}
                 script src="/assets/sse.js" {}
+                script src="/assets/scroll-bottom.js" {}
             }
         }
     }
