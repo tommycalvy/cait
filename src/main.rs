@@ -9,25 +9,37 @@ use axum::{
         IntoResponse,
         sse::{Sse, Event},
     }, 
-    http::header::SET_COOKIE,
+    http::{StatusCode, header::SET_COOKIE},
 };
-use futures::stream::{self, Stream};
+use futures::stream::Stream;
 use axum_extra::extract::{cookie::Cookie, CookieJar};
 use maud::html;
-use tower_http::services::ServeDir;
 use serde_json;
 use serde::Deserialize;
-use std::env;
-use std::fs;
-use std::sync::Arc;
-use std::net::SocketAddr;
-use tracing::log::error;
 use theme::ColorScheme;
-use tower_http::trace::{self, TraceLayer};
-use tracing::Level;
+use tower_http::{
+    trace::{self, TraceLayer},
+    services::ServeDir,
+};
+use tracing::{Level, log::error};
 
-use tokio_stream::StreamExt as _;
-use std::{convert::Infallible, time::Duration};
+use std::{
+    convert::Infallible, 
+    time::Duration,
+    env,
+    fs,
+    sync::Arc,
+    net::SocketAddr,
+};
+
+use llm_chain::{
+    options::{Options, Opt, ModelRef}, 
+    parameters,
+    prompt,
+    traits::Executor,
+    output::StreamExt,
+};
+
 
 mod icon;
 mod component;
@@ -39,6 +51,13 @@ mod theme;
 async fn main() {
     let out_path = env!("OUT_DIR");
     let assets_path = format!("{out_path}/assets");
+
+    let mut builder = Options::builder();
+    builder.add_option(Opt::Model(ModelRef::from_path("models/llama-2-7b-chat.ggmlv3.q2_K.bin")));
+    let options = builder.build();
+    let exec = llm_chain_llama::Executor::new_with_options(options).expect("Couldn't load llama model");
+
+    let shared_exec = Arc::new(exec);
 
     // Will eventually remove and store actual message in postgres
     let fake_messages = fs::read_to_string("./fake-messages.json")
@@ -60,9 +79,10 @@ async fn main() {
         .route("/conversations", get(conversations))
         .route("/conversations/:id", get(conversation).post(message))
         .layer(axum::Extension(shared_fm_list))
+        .route("/chatbot", get(chatbot))
+        .layer(axum::Extension(shared_exec))
         .route("/settings", get(settings))
         .route("/settings/theme", put(settings_theme))
-        .route("/chatbot", get(chatbot))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(trace::DefaultMakeSpan::new()
@@ -202,20 +222,34 @@ fn extract_theme_from_form(theme: ThemeForm) -> ColorScheme {
         })
 }
 
-async fn chatbot(m: Query<Message>) -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
-    let r = format!("<span>message: {{ agent: {}, content: {} }}</span>", m.agent, m.content);
+async fn chatbot(
+    m: Query<Message>,
+    Extension(exec): Extension<Arc<llm_chain_llama::Executor>>,
+) -> Result<Sse<impl Stream<Item = Result<Event, Infallible>>>, StatusCode> {
+    tracing::info!("prompt: {}", m.content);
+    let res = match prompt!(m.content.as_str())
+        .run(&parameters!(), exec.as_ref()).await {
+        Ok(res) => res,
+        Err(e) => {
+            error!("Failed to execute prompt: {:?}", e);
+            return Err(StatusCode::BAD_REQUEST)
+        },
+    };
+    let sse_stream = match res.as_stream().await {
+        Ok(stream) => stream.map(|v| {
+            tracing::info!("value: {:?}", v);
+            let span = format!("<span>{}</span>", v.to_string());
+            Ok(Event::default().event("chatbot").data(span)) 
+        }),
+        Err(e) => {
+            error!("Failed to create output stream from the model: {:?}", e);
+            return Err(StatusCode::INTERNAL_SERVER_ERROR)
+        },
+    };
 
-    let stream = stream::repeat_with(move || 
-        Event::default().event("chatbot").data(r.as_str()))
-        .map(Ok)
-        .throttle(Duration::from_secs(1));
-
-    Sse::new(stream).keep_alive(
+    Ok(Sse::new(sse_stream).keep_alive(
         axum::response::sse::KeepAlive::new()
             .interval(Duration::from_secs(1))
             .text("keep-alive-text"),
-    )
+    ))
 }
-
-
-
