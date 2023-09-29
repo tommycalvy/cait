@@ -12,6 +12,7 @@ use axum::{
     http::{StatusCode, header::SET_COOKIE},
 };
 use futures_core::stream::Stream;
+
 use axum_extra::extract::{cookie::Cookie, CookieJar};
 use maud::html;
 use serde_json;
@@ -233,11 +234,7 @@ async fn chatbot(
     let token_stream = llama.run(m.content.clone());
     let event_stream = stream_events(token_stream);
 
-    Ok(Sse::new(event_stream).keep_alive(
-        axum::response::sse::KeepAlive::new()
-            .interval(Duration::from_secs(1))
-            .text("keep-alive-text"),
-    ))
+    Ok(Sse::new(event_stream))
 }
 
 fn stream_events<S: Stream<Item = Result<String, String>>>(s: S) -> impl Stream<Item = Result<Event, Infallible>> {
@@ -248,6 +245,21 @@ fn stream_events<S: Stream<Item = Result<String, String>>>(s: S) -> impl Stream<
                     let html_fragment = format!("<span>{}</span>", message);
                     tracing::info!("response: {}", html_fragment);
                     yield Ok(Event::default().event("chatbot").data(html_fragment));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
+                    yield Ok(Event::default().event("chatbot").data("\n"));
                 },
                 Err(e) => {
                     error!("Llama error: {:?}", e);
